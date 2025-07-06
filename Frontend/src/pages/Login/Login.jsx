@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import './LoginStyle.css';
+import styles from "./LoginStyle.module.css";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api.js';
@@ -28,30 +28,46 @@ const Login = () => {
     }
   }
 
-  return (
-    <div className="main">
-      <div className="container"> 
-        <h2 className='heading'>
-          Login
-        </h2>
-        <div className="buttons">
-          <button id='butt1' className='butt1 active' onClick={toggleActive}>Trainer</button>
-          <button id="butt2" className='butt2' onClick={toggleActive}>Admin</button>
-        </div>
-        <form className='loginForm' onSubmit={handleSubmit(loginUser)}>
-          <div className='inp'>
-            <label htmlFor="email">Email</label>
-            <input {...register("email", { required: true })} type="text" />
-          </div>
-          <div className='inp'>
-            <label htmlFor="password">Password</label>
-            <input {...register("password", { required: true })} type="password" />
-          </div>
-          <button type="submit" className='submit'>Submit</button>
-        </form>
-      </div>
+return (
+  
+  <div className={`${styles.main} ${styles.loginCard}`}>
+  <div className={styles.container}>
+    <h2 className={styles.heading}>Login</h2>
+
+    <div className={styles.buttons}>
+      <button
+        id="butt1"
+        className={`${styles.butt1} ${styles.active}`}
+        onClick={toggleActive}
+      >
+        Trainer
+      </button>
+      <button
+        id="butt2"
+        className={styles.butt2}
+        onClick={toggleActive}
+      >
+        Admin
+      </button>
     </div>
-  );
+
+    <form className={styles.loginForm} onSubmit={handleSubmit(loginUser)}>
+      <div className={styles.inp}>
+        <label htmlFor="email">Email</label>
+        <input {...register("email", { required: true })} type="text" />
+      </div>
+      <div className={styles.inp}>
+        <label htmlFor="password">Password</label>
+        <input {...register("password", { required: true })} type="password" />
+      </div>
+
+      <button type="submit" className={styles.submit}>
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+);
 };
 
 export default Login;

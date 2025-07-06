@@ -1,0 +1,149 @@
+/* ------------------ FONT ------------------ */
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap");
+
+/* ---------- GLOBAL (scoped with :global) ---------- */
+:global(html),
+:global(body) {
+  height: 100%;
+  margin: 0;
+  font-family: "Roboto Slab", serif;
+}
+:global(#root) {
+  min-height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #040e1a;
+}
+
+/* ---------- WRAPPER ---------- */
+.main {
+  width: 100%;
+  /* remove the side gap entirely */
+  padding: 0 0 2rem;        /* keep a little bottom padding only */
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- CARD ---------- */
+.loginCard {
+  width: 100%;
+  /* max-width: 200px;   */
+  /* padding: 2rem 2.5rem;     */
+  border-radius: 16px;
+  background: #1a2733;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  color: #f2f4f8; 
+  max-width: 260px;      /* was 400px – adjust to taste */
+  padding-left: 2rem;    /* side padding stays reasonable */
+  padding-right: 2rem;
+}
+
+/* ---------- INNER STACK ---------- */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- HEADING ---------- */
+.heading {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  color: #ffffff;
+  margin: 1rem 0 1rem;        /* ↓ trimmed top space */
+}
+
+/* ---------- ROLE BUTTONS ---------- */
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.butt1,
+.butt2 {
+  flex: 1;
+  padding: 0.6rem 0;
+  border-radius: 8px;
+  border: 2px solid #4f93ff;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.active,
+.butt1:hover,
+.butt2:hover {
+  background: #4f93ff;
+}
+
+/* ---------- FORM ---------- */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.inp label {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+/* ✅ 100 % width for BOTH inputs & submit, so they align perfectly */
+.inp input,
+.submit {
+  width: 100%;
+  box-sizing: border-box;  /* ensures borders don’t shrink width */
+}
+
+.inp input {
+  padding: 0.65rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #3a4a5b;
+  background: #243341;
+  color: #e2e8f0;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.inp input:focus {
+  border-color: #4f93ff;
+  background: #2c3e50;
+}
+
+/* ---------- SUBMIT ---------- */
+.submit {
+  padding: 0.75rem 0;
+  border: none;
+  border-radius: 9px;
+  background: #4f93ff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+}
+
+.submit:hover {
+  background: #3278e3;
+}
+.submit:active {
+  transform: scale(0.98);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 1.75rem 1.25rem;
+  }
+}
