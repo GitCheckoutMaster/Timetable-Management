@@ -44,11 +44,6 @@
   margin-left: auto;
 }
 
-/* horizontal line for each row */
-.day-calendar-table tr {
-  border-bottom: 1px solid black;
-}
-
 .day-calendar-container {
   position: relative;
 }
@@ -62,16 +57,25 @@
   z-index: 10;
 }
 
+.day-calendar-table tr {
+  height: 81px;
+  border-bottom: 1px solid black;
+}
+
 .day-calendar-container tr td {
   text-align: center;
-  padding: 40px;
+  padding: 0;            
+  height: 100%;          
+  display: flex;       
+  align-items: center;
+  justify-content: center;
 }
 
 .day-hours {
   display: flex;
   flex-direction: column;
   width: 10%;
-  padding-top: 40px; /* remove */
+  padding-top: 40px; 
   gap: 0px;
 }
 

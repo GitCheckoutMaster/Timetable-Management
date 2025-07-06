@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
 import "./DayCalendarStyle.css";
+import { useEffect, useState } from "react";
+import TaskCard from "../TaskCard/TaskCard.jsx";
 
 const DayCalendar = ({ selectedDate, tasks }) => {
 	const today = new Date();
+	let width = 0;
 	const [minutesOfCurrentDay, setMinutesOfCurrentDay] = useState(
 		today.getHours() * 60 + today.getMinutes()
 	);
@@ -22,14 +24,18 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 	}, []);
 
 	useEffect(() => {
-		
 		const updatedTasks = tasks.filter((task) => {
 			const taskDate = new Date(task.session_date);
 			return taskDate.getDate() == selectedDate.getDate() && taskDate.getMonth() == selectedDate.getMonth() && taskDate.getFullYear() == selectedDate.getFullYear();
 		})
-
 		setCurrentTasks(updatedTasks);
 	}, [selectedDate, tasks]);
+
+	useEffect(() => {
+		currentTasks.sort((a, b) => {
+			return new Date(a.session_start_time) - new Date(b.session_start_time);
+		});
+	}, [currentTasks])
 
 	return (
 		<div className="day-calendar">
@@ -45,7 +51,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 					></div>
 				)}
 
-				<table className="day-hours">
+				<table className="day-hours">	
 					{[...Array(23)].map((_, hour) => {
 						return (
 							<tr key={hour + 1} className="day-hour">
@@ -59,10 +65,36 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 					})}
 				</table>
 				<table className="day-calendar-table">
+					{
+						currentTasks?.map((task, idx, arr) => {
+							const prevTask = idx > 0 ? arr[idx - 1] : null;
+							const prevTaskEndTime = prevTask ? new Date(prevTask.session_end_time) : null;
+							const endTime = new Date(task.session_end_time);
+							const startTime = new Date(task.session_start_time);
+
+							if (prevTaskEndTime && prevTaskEndTime > startTime) {
+								width += 100;
+								return (
+									<TaskCard key={task.id} taskDetails={task} widthOffset={width} />
+								)
+							} else {
+								width = 0;
+							}
+
+							return (
+								<TaskCard
+									key={task.id}
+									taskDetails={task}
+									widthOffset={width}
+								/>
+						  )
+						})
+					}
 					{[...Array(24)].map((_, hour) => {
 						return (
 							<tr key={hour} className="inactive-hour">
-								<td></td>
+								<td>
+								</td>
 							</tr>
 						);
 					})}
