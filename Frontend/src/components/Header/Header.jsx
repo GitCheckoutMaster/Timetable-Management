@@ -62,9 +62,9 @@ const Header = ({ setView, view }) => {
 				</div>
 				<div>
 					<select id="views" className="dropdown" onChange={viewChange}>
-						<option value="month">Month</option>
-						<option value="week">Week</option>
 						<option value="day">Day</option>
+						<option value="week">Week</option>
+						<option value="month">Month</option>
 					</select>
 				</div>
 				<button className="logout-btn" onClick={logoutHandler}>Logout</button>

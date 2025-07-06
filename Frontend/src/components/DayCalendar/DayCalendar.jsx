@@ -7,6 +7,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 	const [minutesOfCurrentDay, setMinutesOfCurrentDay] = useState(
 		today.getHours() * 60 + today.getMinutes()
 	);
+	const [currentTasks, setCurrentTasks] = useState([]);
 	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	const monthName = monthNames[selectedDate.getMonth().toString()];
 	const linePos = (minutesOfCurrentDay / 60) * 80.8;
@@ -19,6 +20,16 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 		}, 60000);
 		return () => clearInterval(timer);
 	}, []);
+
+	useEffect(() => {
+		
+		const updatedTasks = tasks.filter((task) => {
+			const taskDate = new Date(task.session_date);
+			return taskDate.getDate() == selectedDate.getDate() && taskDate.getMonth() == selectedDate.getMonth() && taskDate.getFullYear() == selectedDate.getFullYear();
+		})
+
+		setCurrentTasks(updatedTasks);
+	}, [selectedDate, tasks]);
 
 	return (
 		<div className="day-calendar">

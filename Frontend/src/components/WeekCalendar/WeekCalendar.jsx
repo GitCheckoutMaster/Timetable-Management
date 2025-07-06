@@ -65,6 +65,7 @@ const WeekCalendar = ({ selectedDate }) => {
 					// 	className="week-current-time-line"
 					// 	style={{ top: `${linePos}px`, left: `${124 + (157.5 * 6)}px` }}
 					// ></div>
+					selectedWeek.find((date) => (date.getDate() == new Date().getDate() && date.getMonth() == new Date().getMonth() && date.getFullYear() == new Date().getFullYear())) &&
 					<div
 						className="week-current-time-line"
 						style={{ top: `${linePos}px`, left: `${124 + (157.5 * selectedWeek.findIndex(d => d.getDate() == new Date().getDate() && d.getMonth() == new Date().getMonth() && d.getFullYear() == new Date().getFullYear()))}px` }}

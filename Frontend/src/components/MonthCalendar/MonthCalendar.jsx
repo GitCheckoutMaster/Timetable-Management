@@ -28,7 +28,7 @@ const MonthCalendar = ({ selectedDate }) => {
 		const startOfMonth = new Date(year, month, 1);
 		const endOfMonth = new Date(year, month + 1, 0);
 
-		if (day !== 0) {
+		if (startOfMonth.getDay() !== 0) {
 			startOfMonth.setDate(startOfMonth.getDate() - startOfMonth.getDay());
 		}
 		if (endOfMonth.getDay() !== 6) {

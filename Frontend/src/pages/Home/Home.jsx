@@ -16,7 +16,7 @@ const Home = () => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [tasks, setTasks] = useState([]);
-  const [view, setView] = useState("month");
+  const [view, setView] = useState("day");
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
