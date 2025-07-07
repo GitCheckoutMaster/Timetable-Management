@@ -10,9 +10,22 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 		today.getHours() * 60 + today.getMinutes()
 	);
 	const [currentTasks, setCurrentTasks] = useState([]);
-	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const monthNames = [
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec",
+	];
 	const monthName = monthNames[selectedDate.getMonth().toString()];
-	const linePos = (minutesOfCurrentDay / 60) * 80.8;
+	const linePos = (minutesOfCurrentDay / 60) * 70;
 
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -26,8 +39,12 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 	useEffect(() => {
 		const updatedTasks = tasks.filter((task) => {
 			const taskDate = new Date(task.session_date);
-			return taskDate.getDate() == selectedDate.getDate() && taskDate.getMonth() == selectedDate.getMonth() && taskDate.getFullYear() == selectedDate.getFullYear();
-		})
+			return (
+				taskDate.getDate() == selectedDate.getDate() &&
+				taskDate.getMonth() == selectedDate.getMonth() &&
+				taskDate.getFullYear() == selectedDate.getFullYear()
+			);
+		});
 		setCurrentTasks(updatedTasks);
 	}, [selectedDate, tasks]);
 
@@ -35,7 +52,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 		currentTasks.sort((a, b) => {
 			return new Date(a.session_start_time) - new Date(b.session_start_time);
 		});
-	}, [currentTasks])
+	}, [currentTasks]);
 
 	return (
 		<div className="day-calendar">
@@ -51,7 +68,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 					></div>
 				)}
 
-				<table className="day-hours">	
+				<table className="day-hours">
 					{[...Array(23)].map((_, hour) => {
 						return (
 							<tr key={hour + 1} className="day-hour">
@@ -65,36 +82,35 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 					})}
 				</table>
 				<table className="day-calendar-table">
-					{
-						currentTasks?.map((task, idx, arr) => {
-							const prevTask = idx > 0 ? arr[idx - 1] : null;
-							const prevTaskEndTime = prevTask ? new Date(prevTask.session_end_time) : null;
-							const endTime = new Date(task.session_end_time);
-							const startTime = new Date(task.session_start_time);
+					{currentTasks?.map((task, idx, arr) => {
+						const prevTask = idx > 0 ? arr[idx - 1] : null;
+						const prevTaskEndTime = prevTask
+							? new Date(prevTask.session_end_time)
+							: null;
+						const startTime = new Date(task.session_start_time);
 
-							if (prevTaskEndTime && prevTaskEndTime > startTime) {
-								width += 100;
-								return (
-									<TaskCard key={task.id} taskDetails={task} widthOffset={width} />
-								)
-							} else {
-								width = 0;
-							}
-
+						if (prevTaskEndTime && prevTaskEndTime > startTime) {
+							width += 100;
 							return (
 								<TaskCard
 									key={task.id}
 									taskDetails={task}
 									widthOffset={width}
+									viewWidth={930}
 								/>
-						  )
-						})
-					}
+							);
+						} else {
+							width = 0;
+						}
+
+						return (
+							<TaskCard key={task.id} taskDetails={task} widthOffset={width} viewWidth={930} />
+						);
+					})}
 					{[...Array(24)].map((_, hour) => {
 						return (
 							<tr key={hour} className="inactive-hour">
-								<td>
-								</td>
+								<td></td>
 							</tr>
 						);
 					})}

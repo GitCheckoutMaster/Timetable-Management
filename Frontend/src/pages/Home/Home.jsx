@@ -30,7 +30,7 @@ const Home = () => {
     try {
       const tasks = await getAllTasks();
       if (tasks) {
-        console.log("Tasks fetched successfully:", tasks);
+        // console.log("Tasks fetched successfully:", tasks);
         setTasks(tasks);
       }
     } catch (error) {
@@ -48,8 +48,8 @@ const Home = () => {
         </div>
         <div className="calendar">
           {view == "day" && <DayCalendar selectedDate={selectedDate} tasks={tasks} />}
-          {view == "week" && <WeekCalendar selectedDate={selectedDate} />}
-          {view == "month" && <MonthCalendar selectedDate={selectedDate} />} 
+          {view == "week" && <WeekCalendar selectedDate={selectedDate} tasks={tasks} />}
+          {view == "month" && <MonthCalendar selectedDate={selectedDate} tasks={tasks} />} 
         </div>
       </div>
     </div>

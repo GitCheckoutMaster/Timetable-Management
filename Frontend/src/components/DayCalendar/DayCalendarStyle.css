@@ -3,49 +3,83 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  font-family: 'Poppins', sans-serif;
 }
 
 .day-calendar-header {
   display: flex;
-  flex-direction: row;
   align-items: center;
   width: 100%;
-  height: 50px;
-  padding: 20px 120px;
-  padding-bottom: 20px;
-  gap: 20px;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  height: 60px;
+  padding: 0 40px;
+  gap: 15px;
 }
 
 .day-calendar-header h2 {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 40px; 
-  height: 40px;
-  border-radius: 50%; 
-  font-weight: bold;
-  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #e7f8f2;
+  color: #4a4a4a;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.day-calendar-header h3 {
+  font-size: 18px;
+  color: #5a5a5a;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 .day-calendar-container {
   display: flex;
-  flex-direction: row;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 60px);
   overflow-y: auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  background: #fff;
+}
+
+.day-hours {
+  display: flex;
+  flex-direction: column;
+  padding-top: 33px;
+  width: 10%;
+}
+
+.day-hour {
+  flex: 0 0 70px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #7a7a7a;
 }
 
 .day-calendar-table {
   width: 90%;
-  height: 100%;
-  border-top: 1px solid black;
-  border-collapse: collapse; 
-  margin-left: auto;
+  border-collapse: collapse;
+  position: relative;
 }
 
-.day-calendar-container {
-  position: relative;
+.day-calendar-table tr {
+  height: 70px;
+  border-bottom: 1.5px solid #dcdcdc;
+}
+
+.day-calendar-container tr td {
+  text-align: center;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .current-time-line {
@@ -53,38 +87,8 @@
   left: 10%;
   right: 0;
   height: 2px;
-  background: red;
+  background: #ff6961;
   z-index: 10;
-}
-
-.day-calendar-table tr {
-  height: 81px;
-  border-bottom: 1px solid black;
-}
-
-.day-calendar-container tr td {
-  text-align: center;
-  padding: 0;            
-  height: 100%;          
-  display: flex;       
-  align-items: center;
-  justify-content: center;
-}
-
-.day-hours {
-  display: flex;
-  flex-direction: column;
-  width: 10%;
-  padding-top: 40px; 
-  gap: 0px;
-}
-
-.day-hour {
-  flex: 0 0 81px; /* means: do not grow, do not shrink, fixed height 81px */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: lighter;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  box-shadow: 0 0 6px rgba(255, 105, 97, 0.5);
+  border-radius: 2px;
 }

@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import "./MonthCalendarStyle.css";
+import TaskCard from "../TaskCard/TaskCard";
 
-const MonthCalendar = ({ selectedDate }) => {
+const MonthCalendar = ({ selectedDate, tasks }) => {
 	const [selectedMonths, setSelectedMonths] = useState([]);
 	const shortWeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	const shortMonthDays = [
@@ -19,10 +20,10 @@ const MonthCalendar = ({ selectedDate }) => {
 		"Nov",
 		"Dec",
 	];
+	const [filteredTasks, setFilteredTasks] = useState([]);
 
 	useEffect(() => {
 		const month = selectedDate.getMonth();
-		const day = selectedDate.getDay();
 		const year = selectedDate.getFullYear();
 
 		const startOfMonth = new Date(year, month, 1);
@@ -44,6 +45,29 @@ const MonthCalendar = ({ selectedDate }) => {
 		);
 	}, [selectedDate]);
 
+	useEffect(() => {
+		const updatedTasks = tasks.filter((task) => {
+			return selectedMonths.some((date) => {
+				const taskDate = new Date(task.session_date);
+				return (
+					taskDate.getDate() === date.getDate() &&
+					taskDate.getMonth() === date.getMonth() &&
+					taskDate.getFullYear() === date.getFullYear()
+				);
+			});
+		});
+		setFilteredTasks(updatedTasks);
+	}, [tasks, selectedDate, selectedMonths]);
+
+	const isToday = (date) => {
+		const now = new Date();
+		return (
+			date.getDate() === now.getDate() &&
+			date.getMonth() === now.getMonth() &&
+			date.getFullYear() === now.getFullYear()
+		);
+	};
+
 	return (
 		<div className="month-calendar">
 			<div className="month-calendar-header">
@@ -62,14 +86,38 @@ const MonthCalendar = ({ selectedDate }) => {
 								.map((date, index) => (
 									<td
 										key={index}
-										className={`${date.getDate() == 1 ? "new-month" : ""}`}
+										className={`${date.getDate() === 1 ? "new-month" : ""} ${
+											isToday(date) ? "today" : ""
+										}`}
 									>
-										<h2>
-											{date.getDate()}{" "}
-											{date.getDate() == 1
-												? shortMonthDays[date.getMonth()]
-												: ""}
-										</h2>
+										<div className="day-cell">
+											<div className="day-number">
+												{date.getDate()}
+												{date.getDate() === 1 && (
+													<span className="month-tag">
+														{shortMonthDays[date.getMonth()]}
+													</span>
+												)}
+											</div>
+											{filteredTasks
+												.filter(
+													(task) =>
+														new Date(task.session_date).getDate() ===
+															date.getDate() &&
+														new Date(task.session_date).getMonth() ===
+															date.getMonth() &&
+														new Date(task.session_date).getFullYear() ===
+															date.getFullYear()
+												)
+												.map((task) => (
+													<TaskCard
+														key={task.id}
+														taskDetails={task}
+														widthOffset={0}
+														viewWidth={0}
+													/>
+												))}
+										</div>
 									</td>
 								))}
 						</tr>

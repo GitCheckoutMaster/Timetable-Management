@@ -8,7 +8,7 @@ const api = axios.create( {
 export const login = async (data) => {
   return await api.post("/user/login", data, { withCredentials: true })
     .then((response) => {
-      console.log("Login successful: ", response.data);
+      // console.log("Login successful: ", response.data);
       localStorage.setItem("user", JSON.stringify(response.data.data));
       return response.data.data;
     })
@@ -20,7 +20,7 @@ export const login = async (data) => {
 export const logout = async () => {
   return await api.get("/user/logout", { withCredentials: true })
     .then((response) => {
-      console.log("Logout successful: ", response.data);
+      // console.log("Logout successful: ", response.data);
       localStorage.removeItem("user");
       return response.data;
     })
@@ -32,7 +32,7 @@ export const logout = async () => {
 export const getAllTasks = async () => {
   return await api.get("/tasks/getAllTasks", { withCredentials: true })
     .then((response) => {
-      console.log("Tasks fetched successfully: ", response.data);
+      // console.log("Tasks fetched successfully: ", response.data);
       return response.data.data.tasks;
     })
     .catch((error) => {

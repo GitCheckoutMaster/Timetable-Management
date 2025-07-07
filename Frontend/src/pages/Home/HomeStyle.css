@@ -1,59 +1,82 @@
+/* Import the same font for consistency */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+  background: #f7fafc;
+  padding: 20px;
+  gap: 20px;
 }
 
 .calendar-container {
   display: flex;
-  flex-direction: row;
   width: 100%;
-  height: 100%;
-  overflow-y: hidden;
-  overflow-x: hidden;
+  height: calc(100% - 60px);
+  gap: 25px; /* slightly more gap */
 }
 
 .sidebar {
-  padding: 30px;
-  width: 15%;
-  height: 100%;
-}
-
-.user-name {
-  font-size: 20px;
-  font-weight: 500;
-  color: black;
-  margin-bottom: 20px;
-  width: 100%;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
-  /* background-color: rgb(99, 85, 255); */
-  border-radius: 30px;
-  color: rgb(96, 93, 93);
-  letter-spacing: 2px;
-}
-
-.create-button {
-  width: 120px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgb(229, 226, 226);
-  border: 1px solid black;
-  border-radius: 30px;
-}
-
-.calendar {
-  width: 85%;
-  height: 100%;
+  padding: 50px; /* more inner space */
+  width: 340px;  /* even bigger but not huge */
+  min-width: 280px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: white;
+  gap: 35px; /* space between user name, calendar etc */
+}
+
+.user-name {
+  width: 100%;
+  font-size: 20px;
+  font-weight: 500;
+  color: #5a5a5a;
+  letter-spacing: 1px;
+  background: #f0f4f3;
+  border-radius: 30px;
+  padding: 18px 35px; /* a bit more padding */
+  text-align: center;
+}
+
+.create-button {
+  width: 150px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e7f8f2;
+  border: 2px solid #a2d5c6;
+  border-radius: 25px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.create-button:hover {
+  background: #a2d5c6;
+  color: #fff;
+}
+
+.calendar {
+  flex: 1;
+  background: #ffffff;
   border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }

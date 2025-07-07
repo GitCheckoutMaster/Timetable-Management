@@ -3,84 +3,126 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+  font-family: 'Poppins', sans-serif;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 .week-calendar-header {
   display: flex;
-  flex-direction: row;
   width: 100%;
-  height: 50px;
-  padding-left: 150px;
-  padding-bottom: 20px;
-  padding-top: 10px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.week-calendar-hours-header {
+  width: 10%;
+}
+
+.week-calendar-days-header {
+  width: 90%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
 }
 
 .week-calendar-heading {
   display: flex;
-  flex-direction: row;
-  width: 12.85%;
-  gap: 5px;
+  flex-direction: column;
   align-items: center;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  gap: 5px;
+  padding: 10px 0;
 }
 
 .week-calendar-heading h2 {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px; 
+  width: 40px;
   height: 40px;
-  border-radius: 50%; 
-  font-weight: bold;
+  background: #e7f8f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+.week-calendar-heading h2:hover {
+  background: #a2d5c6;
+  color: #fff;
 }
 
 .active-date {
-  background-color: rgb(72, 247, 238);
+  background: #a2d5c6 !important;
+  color: #fff !important;
+}
+
+.week-calendar-heading h3 {
+  font-size: 12px;
+  color: #5a5a5a;
 }
 
 .week-calendar-body {
-  position: relative;
   display: flex;
-  flex-direction: row;
+  height: calc(100% - 80px);
   overflow-y: auto;
-}
-
-.week-calendar-table {
-  width: 90%;
-  height: 100%;
-  border-top: 1px solid black;
-  margin-left: auto;
-}
-
-.week-calendar-table td {
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-  padding: 40px;
 }
 
 .week-calendar-hours {
   display: flex;
   flex-direction: column;
   width: 10%;
-  padding-top: 40px; 
-  gap: 0px;
+  background: #f7fafc;
+  padding-top: 35px;
 }
 
 .week-hour {
-  flex: 0 0 82.6px; 
+  flex: 0 0 70px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: lighter;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: #7a7a7a;
+}
+
+.week-calendar-table-container {
+  width: 90%;
+}
+
+.week-calendar-table {
+  width: 100%;
+  position: relative;
+  border-collapse: collapse;
+}
+
+.week-calendar-table td {
+  height: 70px;
+  width: calc(100% / 7);
+  border-bottom: 1px solid #e0e0e0;
+  border-right: 1px solid #e0e0e0;
+  transition: background 0.3s;
+}
+
+.week-calendar-table td:last-child {
+  border-right: none;
+}
+
+.week-calendar-table tr:last-child td {
+  border-bottom: none;
+}
+
+.week-calendar-table td:hover {
+  background: #f0f4f3;
 }
 
 .week-current-time-line {
   position: absolute;
-  width: 156.36px;
   height: 2px;
-  background: red;
+  background: #ff6961;
+  border-radius: 2px;
+  box-shadow: 0 0 6px rgba(255,105,97,0.5);
   z-index: 10;
 }
