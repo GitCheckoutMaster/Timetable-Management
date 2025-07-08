@@ -21,7 +21,7 @@ const Login = () => {
     const admin = document.getElementById("butt2").classList.contains("active") ? 1 : 0;
     const res = await login({ ...data, admin });
     if (res) {
-      navigate("/");
+      navigate("/home/day-view");
     }
   };
 

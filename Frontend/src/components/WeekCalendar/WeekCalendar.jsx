@@ -2,8 +2,10 @@
 import "./WeekCalendarStyle.css";
 import { useEffect, useState } from "react";
 import TaskCard from "../TaskCard/TaskCard.jsx";
+import { useOutletContext } from "react-router-dom";
 
-const WeekCalendar = ({ selectedDate, tasks }) => {
+const WeekCalendar = () => {
+	const { selectedDate, tasks } = useOutletContext();
 	const [selectedWeek, setSelectedWeek] = useState([]);
 	const [currentTasks, setCurrentTasks] = useState([]);
 	const shortWeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -15,10 +17,10 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 
 	// Calculate week days
 	useEffect(() => {
-		const day = selectedDate.getDay();
-		const date = selectedDate.getDate();
-		const month = selectedDate.getMonth();
-		const year = selectedDate.getFullYear();
+		const day = selectedDate?.getDay();
+		const date = selectedDate?.getDate();
+		const month = selectedDate?.getMonth();
+		const year = selectedDate?.getFullYear();
 
 		const startOfWeek = new Date(year, month, date - day);
 		setSelectedWeek(
@@ -32,7 +34,7 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 
 	// Filter tasks for this week
 	useEffect(() => {
-		const updatedTasks = tasks.filter((task) => {
+		const updatedTasks = tasks?.filter((task) => {
 			const taskDate = new Date(task.session_date);
 			return selectedWeek.some(
 				(date) =>
@@ -42,7 +44,7 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 			);
 		});
 		setCurrentTasks(
-			updatedTasks.sort(
+			updatedTasks?.sort(
 				(a, b) =>
 					new Date(a.session_start_time) - new Date(b.session_start_time)
 			)
@@ -51,7 +53,7 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 
 	// Current time line position
 	// const linePos = (minutesOfCurrentDay / 60) * 70;
-	const linePos = (minutesOfCurrentDay * 1.17);
+	const linePos = minutesOfCurrentDay * 1.17;
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setMinutesOfCurrentDay(
@@ -104,23 +106,22 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 				</div>
 
 				<div className="week-calendar-table-container">
-					{selectedWeek.find(
-						(date) =>
-							date.getDate() === new Date().getDate() &&
-							date.getMonth() === new Date().getMonth() &&
-							date.getFullYear() === new Date().getFullYear()
-					) && (
-						<div
-							className="week-current-time-line"
-							style={{
-								top: `${linePos}px`,
-								left: `${(new Date().getDay() * 100) / 7}%`,
-								width: `${100 / 7}%`,
-							}}
-						></div>
-					)}
-
 					<table className="week-calendar-table">
+						{selectedWeek.find(
+							(date) =>
+								date.getDate() === new Date().getDate() &&
+								date.getMonth() === new Date().getMonth() &&
+								date.getFullYear() === new Date().getFullYear()
+						) && (
+							<div
+								className="week-current-time-line"
+								style={{
+									top: `${linePos}px`,
+									left: `${(new Date().getDay() * 100) / 7}%`,
+									width: `${100 / 7}%`,
+								}}
+							></div>
+						)}
 						{currentTasks?.map((task, idx, arr) => {
 							const prevTask = idx > 0 ? arr[idx - 1] : null;
 							const prevTaskEndTime = prevTask
@@ -135,7 +136,7 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 										key={task.id}
 										taskDetails={task}
 										widthOffset={width}
-										viewWidth={123.80}
+										viewWidth={123.8}
 									/>
 								);
 							} else {
@@ -147,7 +148,7 @@ const WeekCalendar = ({ selectedDate, tasks }) => {
 									key={task.id}
 									taskDetails={task}
 									widthOffset={width}
-									viewWidth={133.80}
+									viewWidth={133.8}
 								/>
 							);
 						})}

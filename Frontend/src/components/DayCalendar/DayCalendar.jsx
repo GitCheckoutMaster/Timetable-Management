@@ -2,8 +2,10 @@
 import "./DayCalendarStyle.css";
 import { useEffect, useState } from "react";
 import TaskCard from "../TaskCard/TaskCard.jsx";
+import { useOutletContext } from "react-router-dom";
 
-const DayCalendar = ({ selectedDate, tasks }) => {
+const DayCalendar = () => {
+	const { selectedDate, tasks } = useOutletContext();
 	const today = new Date();
 	let width = 0;
 	const [minutesOfCurrentDay, setMinutesOfCurrentDay] = useState(
@@ -24,7 +26,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 		"Nov",
 		"Dec",
 	];
-	const monthName = monthNames[selectedDate.getMonth().toString()];
+	const monthName = monthNames[selectedDate?.getMonth().toString()];
 	const linePos = (minutesOfCurrentDay / 60) * 70;
 
 	useEffect(() => {
@@ -37,7 +39,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 	}, []);
 
 	useEffect(() => {
-		const updatedTasks = tasks.filter((task) => {
+		const updatedTasks = tasks?.filter((task) => {
 			const taskDate = new Date(task.session_date);
 			return (
 				taskDate.getDate() == selectedDate.getDate() &&
@@ -49,7 +51,7 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 	}, [selectedDate, tasks]);
 
 	useEffect(() => {
-		currentTasks.sort((a, b) => {
+		currentTasks?.sort((a, b) => {
 			return new Date(a.session_start_time) - new Date(b.session_start_time);
 		});
 	}, [currentTasks]);
@@ -57,17 +59,10 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 	return (
 		<div className="day-calendar">
 			<div className="day-calendar-header">
-				<h2>{selectedDate.getDate().toString()}</h2>
+				<h2>{selectedDate?.getDate().toString()}</h2>
 				<h3>{monthName}</h3>
 			</div>
 			<div className="day-calendar-container">
-				{today.getDate() === selectedDate.getDate() && (
-					<div
-						className="current-time-line"
-						style={{ top: `${linePos}px` }}
-					></div>
-				)}
-
 				<table className="day-hours">
 					{[...Array(23)].map((_, hour) => {
 						return (
@@ -82,6 +77,13 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 					})}
 				</table>
 				<table className="day-calendar-table">
+					{today.getDate() === selectedDate?.getDate() && (
+						<div
+							className="current-time-line"
+							style={{ top: `${linePos}px` }}
+						></div>
+					)}
+
 					{currentTasks?.map((task, idx, arr) => {
 						const prevTask = idx > 0 ? arr[idx - 1] : null;
 						const prevTaskEndTime = prevTask
@@ -104,7 +106,12 @@ const DayCalendar = ({ selectedDate, tasks }) => {
 						}
 
 						return (
-							<TaskCard key={task.id} taskDetails={task} widthOffset={width} viewWidth={930} />
+							<TaskCard
+								key={task.id}
+								taskDetails={task}
+								widthOffset={width}
+								viewWidth={930}
+							/>
 						);
 					})}
 					{[...Array(24)].map((_, hour) => {

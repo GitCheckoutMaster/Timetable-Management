@@ -17,6 +17,7 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.59.0",
     "react-router-dom": "^7.6.3",
+    "react-select": "^5.10.1",
     "react-tooltip": "^5.29.1",
     "reactjs-popup": "^2.0.6"
   },

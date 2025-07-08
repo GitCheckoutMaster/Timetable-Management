@@ -22,7 +22,7 @@ async function generateTokens(user) {
 }
 
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, number } = req.body;
+  const { name, email, password, phone, admin } = req.body;
   const query = "SELECT * FROM users WHERE email = ?";
 
   connection.query(query, [email], async (error, results) => {
@@ -38,8 +38,8 @@ export const register = asyncHandler(async (req, res) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const insertQuery = "INSERT INTO users (name, email, password, phone) VALUES (?, ?, ?, ?)";
-    connection.query(insertQuery, [name, email, hashedPassword, number], (insertError, insertResults) => {
+    const insertQuery = "INSERT INTO users (name, email, password, phone, admin) VALUES (?, ?, ?, ?, ?)";
+    connection.query(insertQuery, [name, email, hashedPassword, phone, admin], (insertError, insertResults) => {
       if (insertError) {
         console.error("Database insert error:", insertError);
         throw new ApiError(500, "Internal server error");
@@ -52,7 +52,7 @@ export const register = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
 	const { email, password, admin } = req.body;
-	const query = "SELECT * FROM users WHERE email = ? AND admin = ?";
+	const query = "SELECT * FROM users WHERE email=? AND admin=?";
 
 	connection.query(query, [email, admin], async (error, results) => {
 		if (error) {
@@ -84,6 +84,41 @@ export const login = asyncHandler(async (req, res) => {
         httpOnly: true,
       })
 			.json(new ApiResponse(200, "Login successful", user));
+	});
+});
+
+export const getAllTrainers = asyncHandler(async (req, res) => {
+	const query = "SELECT * FROM users WHERE admin = 0";
+
+	connection.query(query, (error, results) => {
+		if (error) {
+			console.error("Database query error:", error);
+			return res.status(500).json(new ApiError(500, "Internal server error"));
+		}
+
+		if (results.length === 0) {
+			return res.status(404).json(new ApiError(404, "No trainers found"));
+		}
+
+		return res.status(200).json(new ApiResponse(200, "Trainers fetched successfully", results));
+	});
+});
+
+export const getTaskByUserId = asyncHandler(async (req, res) => {
+	const userId = req.params.userId;
+	const query = "SELECT * FROM trainer_utilization WHERE trainer_id = ?";
+
+	connection.query(query, [userId], (error, results) => {
+		if (error) {
+			console.error("Database query error:", error);
+			return res.status(500).json(new ApiError(500, "Internal server error"));
+		}
+
+		if (results.length === 0) {
+			return res.status(404).json(new ApiError(404, "No tasks found for this user"));
+		}
+
+		return res.status(200).json(new ApiResponse(200, "Tasks fetched successfully", results));
 	});
 });
 

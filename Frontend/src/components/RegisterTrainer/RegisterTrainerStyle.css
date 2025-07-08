@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.register-trainer-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.register-trainer-container h2 {
+  text-align: center;
+  color: #4a7c59;
+  font-weight: 600;
+}
+
+.register-trainer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a7c59;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 15px;
+  border-radius: 15px;
+  border: 2px solid #a2d5c6;
+  transition: all 0.3s ease;
+  outline: none;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4a7c59;
+  box-shadow: 0 0 0 3px rgba(162, 213, 198, 0.3);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  background: #e7f8f2;
+  border: 2px solid #a2d5c6;
+  border-radius: 25px;
+  color: #4a7c59;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+button[type="submit"]:hover {
+  background: #a2d5c6;
+  color: #ffffff;
+  border-color: #4a7c59;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.error-message {
+  background: #ffecec;
+  color: #d9534f;
+  border: 2px solid #f5c6cb;
+  border-radius: 15px;
+  padding: 20px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 400px;
+  margin: 40px auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}

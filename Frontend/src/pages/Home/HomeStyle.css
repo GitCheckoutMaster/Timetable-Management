@@ -25,29 +25,17 @@
   gap: 25px; /* slightly more gap */
 }
 
-.sidebar {
-  padding: 50px; /* more inner space */
-  width: 340px;  /* even bigger but not huge */
+.user-sidebar {
+  padding: 50px;
+  width: 340px;
   min-width: 280px;
   background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 35px; /* space between user name, calendar etc */
-}
-
-.user-name {
-  width: 100%;
-  font-size: 20px;
-  font-weight: 500;
-  color: #5a5a5a;
-  letter-spacing: 1px;
-  background: #f0f4f3;
-  border-radius: 30px;
-  padding: 18px 35px; /* a bit more padding */
-  text-align: center;
+  gap: 35px;
 }
 
 .create-button {
@@ -80,3 +68,125 @@
   flex-direction: column;
   overflow-y: auto;
 }
+
+.upcoming-tasks {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.upcoming-tasks h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a7c59;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.upcoming-tasks ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #a2d5c6 #f0f4f3;
+}
+
+/* for Chrome */
+.upcoming-tasks ul::-webkit-scrollbar {
+  width: 6px;
+}
+.upcoming-tasks ul::-webkit-scrollbar-thumb {
+  background: #a2d5c6;
+  border-radius: 10px;
+}
+.upcoming-tasks ul::-webkit-scrollbar-track {
+  background: #f0f4f3;
+}
+
+.task-item {
+  background: linear-gradient(135deg, #e7f8f2, #ffffff);
+  padding: 12px 18px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  border: 1px solid #a2d5c6;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+}
+
+.task-item:hover {
+  background: linear-gradient(135deg, #a2d5c6, #e7f8f2);
+  color: #ffffff;
+}
+
+.task-title {
+  font-weight: 500;
+  color: #4a7c59;
+}
+
+.task-date {
+  font-size: 13px;
+  color: #5a5a5a;
+}
+
+.admin-info {
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid #a2d5c6;
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  transition: all 0.3s ease;
+}
+
+.admin-info:hover {
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  border-color: #4a7c59;
+}
+
+.admin-info h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4a7c59;
+  margin-bottom: 10px;
+}
+
+.admin-info .react-select__control {
+  width: 100%;
+}
+
+.register-trainer {
+  width: 180px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e7f8f2;
+  border: 2px solid #a2d5c6;
+  border-radius: 25px;
+  color: #4a7c59;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.register-trainer:hover {
+  background: #a2d5c6;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-color: #4a7c59;
+}
+

@@ -2,8 +2,10 @@
 import { useEffect, useState } from "react";
 import "./MonthCalendarStyle.css";
 import TaskCard from "../TaskCard/TaskCard";
+import { useOutletContext } from "react-router-dom";
 
-const MonthCalendar = ({ selectedDate, tasks }) => {
+const MonthCalendar = () => {
+	const { selectedDate, tasks } = useOutletContext();
 	const [selectedMonths, setSelectedMonths] = useState([]);
 	const shortWeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	const shortMonthDays = [
@@ -23,8 +25,8 @@ const MonthCalendar = ({ selectedDate, tasks }) => {
 	const [filteredTasks, setFilteredTasks] = useState([]);
 
 	useEffect(() => {
-		const month = selectedDate.getMonth();
-		const year = selectedDate.getFullYear();
+		const month = selectedDate?.getMonth();
+		const year = selectedDate?.getFullYear();
 
 		const startOfMonth = new Date(year, month, 1);
 		const endOfMonth = new Date(year, month + 1, 0);
@@ -46,7 +48,7 @@ const MonthCalendar = ({ selectedDate, tasks }) => {
 	}, [selectedDate]);
 
 	useEffect(() => {
-		const updatedTasks = tasks.filter((task) => {
+		const updatedTasks = tasks?.filter((task) => {
 			return selectedMonths.some((date) => {
 				const taskDate = new Date(task.session_date);
 				return (

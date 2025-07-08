@@ -84,7 +84,7 @@
 
 .current-time-line {
   position: absolute;
-  left: 10%;
+  left: 0;
   right: 0;
   height: 2px;
   background: #ff6961;

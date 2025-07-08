@@ -4,55 +4,189 @@ import Header from "../../components/Header/Header";
 
 /* https://www.npmjs.com/package/react-calendar to refer this tool */
 import Calendar from "react-calendar";
-import './../../../node_modules/react-calendar/dist/Calendar.css';
-import DayCalendar from "../../components/DayCalendar/DayCalendar";
+import "./../../../node_modules/react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
-import WeekCalendar from "../../components/WeekCalendar/WeekCalendar";
-import MonthCalendar from "../../components/MonthCalendar/MonthCalendar";
 import { useNavigate } from "react-router-dom";
-import { getAllTasks } from "../../api.js";
+import { getAllTasks, getAllTrainers, getTaskById } from "../../api.js";
+import Select from "react-select";
+import { Outlet } from "react-router-dom";
 
 const Home = () => {
+	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [tasks, setTasks] = useState([]);
+	const [view, setView] = useState("day");
+	const navigate = useNavigate();
+	const [upcomingTasks, setUpcomingTasks] = useState([]);
+	const [trainers, setTrainers] = useState([]);
+	const user = JSON.parse(localStorage.getItem("user"));
+	const selectStyles = {
+		control: (provided, state) => ({
+			...provided,
+			background: "#ffffff",
+			borderColor: "#a2d5c6",
+			borderRadius: "15px",
+			boxShadow: state.isFocused
+				? "0 0 0 2px rgba(162, 213, 198, 0.5)"
+				: "0 4px 12px rgba(0,0,0,0.05)",
+			padding: "4px 8px",
+			"&:hover": {
+				borderColor: "#4a7c59",
+			},
+		}),
+		option: (provided, state) => ({
+			...provided,
+			background: state.isFocused
+				? "#e7f8f2"
+				: state.isSelected
+				? "#a2d5c6"
+				: "#ffffff",
+			color: state.isSelected ? "#fff" : "#4a7c59",
+			cursor: "pointer",
+			fontSize: "14px",
+			"&:active": {
+				background: "#a2d5c6",
+				color: "#fff",
+			},
+		}),
+		menu: (provided) => ({
+			...provided,
+			borderRadius: "15px",
+			overflow: "hidden",
+			boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+		}),
+		singleValue: (provided) => ({
+			...provided,
+			color: "#4a7c59",
+			fontWeight: 500,
+		}),
+		placeholder: (provided) => ({
+			...provided,
+			color: "#888",
+		}),
+		dropdownIndicator: (provided) => ({
+			...provided,
+			color: "#a2d5c6",
+			"&:hover": {
+				color: "#4a7c59",
+			},
+		}),
+		indicatorSeparator: () => ({
+			display: "none",
+		}),
+	};
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [tasks, setTasks] = useState([]);
-  const [view, setView] = useState("day");
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+	useEffect(() => {
+		if (!localStorage.getItem("user")) {
+			navigate("/login");
+		}
+	}, [navigate]);
+	const [options, setOptions] = useState([]);
 
-  useEffect(() => {
-    if (!localStorage.getItem("user")) {
-      navigate("/login");
-    }
-  }, [navigate]);
+	useEffect(
+		() => async () => {
+			try {
+				const tasks = await getAllTasks();
+				const users = await getAllTrainers();
+				if (users) {
+					// console.log("Trainers fetched successfully:", users);
+					setTrainers(users);
+				}
+				if (tasks) {
+					// console.log("Tasks fetched successfully:", tasks);
+					setTasks(tasks);
+				}
+			} catch (error) {
+				console.error("Error fetching tasks or users:", error);
+			}
+		},
+		[]
+	);
 
-  useEffect(() => (async () => {
-    try {
-      const tasks = await getAllTasks();
-      if (tasks) {
-        // console.log("Tasks fetched successfully:", tasks);
-        setTasks(tasks);
-      }
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  }), []);
+	useEffect(() => {
+		setOptions(
+			trainers.map((trainer) => ({
+				value: trainer.id,
+				label: `${trainer.name}`,
+			}))
+		)
+	}, [trainers]);
+
+	useEffect(() => {
+		const upcoming = tasks
+			?.filter(
+				(task) =>
+					new Date(task.session_date).getDate() === new Date().getDate() &&
+					new Date(task.session_date).getMonth() === new Date().getMonth() &&
+					new Date(task.session_date).getFullYear() === new Date().getFullYear()
+			)
+			?.filter(
+				(task) =>
+					new Date(task.session_start_time) >= new Date() &&
+					new Date(task.session_start_time) <= new Date().setHours(23, 59, 59)
+			)
+			?.sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
+			?.slice(0, 5);
+
+		setUpcomingTasks(upcoming);
+	}, [tasks]);
+
+
+	// trainer select change handler
+	const handleTrainerChange = async (selectedOption) => {
+		const updatedTasks = await getTaskById(selectedOption.value);
+		setTasks(updatedTasks);
+	};
 
 	return (
 		<div className="home-container">
-      <Header setView={setView} view={view} />
-      <div className="calendar-container">
-        <div className="sidebar">
-          <h2 className="user-name">{user?.name}</h2>
-          <Calendar onChange={setSelectedDate} value={selectedDate} />
-        </div>
-        <div className="calendar">
-          {view == "day" && <DayCalendar selectedDate={selectedDate} tasks={tasks} />}
-          {view == "week" && <WeekCalendar selectedDate={selectedDate} tasks={tasks} />}
-          {view == "month" && <MonthCalendar selectedDate={selectedDate} tasks={tasks} />} 
-        </div>
-      </div>
-    </div>
+			<Header setView={setView} view={view} />
+			<div className="calendar-container">
+				<div className="user-sidebar">
+					<Calendar onChange={setSelectedDate} value={selectedDate} />
+					{user && user.admin == 0 ? (
+						<div className="upcoming-tasks">
+							<h3>Upcoming Tasks</h3>
+							<ul>
+								{upcomingTasks.length > 0 ? (
+									upcomingTasks.map((task) => (
+										<li key={task._id} className="task-item">
+											<div className="task-info">
+												<div className="task-title">{task.course_name}</div>
+												<div className="task-time">
+													{new Date(task.session_start_time).toLocaleTimeString(
+														[],
+														{ hour: "2-digit", minute: "2-digit" }
+													)}
+													{" - "}
+													{new Date(task.session_end_time).toLocaleTimeString(
+														[],
+														{ hour: "2-digit", minute: "2-digit" }
+													)}
+												</div>
+											</div>
+											<div className="task-date">
+												{new Date(task.session_date).toLocaleDateString()}
+											</div>
+										</li>
+									))
+								) : (
+									<li>No upcoming tasks</li>
+								)}
+							</ul>
+						</div>
+					) : (
+						<div className="admin-info">
+							<h3>Trainers</h3>
+							<Select options={options} styles={selectStyles} onChange={handleTrainerChange} />
+							<div className="register-trainer" onClick={() => navigate("/home/register-trainer")}>Register</div>
+						</div>
+					)}
+				</div>
+				<div className="calendar">
+					<Outlet context={{ selectedDate, tasks }} />
+				</div>
+			</div>
+		</div>
 	);
 };
 

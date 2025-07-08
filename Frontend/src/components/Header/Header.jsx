@@ -2,25 +2,45 @@
 import { useEffect } from "react";
 import "./HeaderStyle.css";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../../api.js";
 
 const Header = ({ setView, view }) => {
 	const today = new Date();
 	const formattedDate = today.toLocaleDateString();
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const behind_change = () => {};
 	const ahead_change = () => {};
 
 	const viewChange = (e) => {
 		setView(e.target.value);
+		if (e.target.value == "day") {
+			navigate("/home/day-view");
+		} else if (e.target.value == "week") {
+			navigate("/home/week-view");
+		} else if (e.target.value == "month") {
+			navigate("/home/month-view");
+		}
 	};
 
 	useEffect(() => {
 		const selector = document.getElementById("views");
 		selector.value = view;
 	}, [view]);
+
+	useEffect(() => {
+		if (location.pathname === "/home/day-view") {
+			setView("day");
+		} else if (location.pathname === "/home/week-view") {
+			setView("week");
+		} else if (location.pathname === "/home/month-view") {
+			setView("month");
+		} else {
+			setView("none");
+		}
+	}, [location.pathname, setView]);
 
 	const logoutHandler = async () => {
 		localStorage.clear();
@@ -57,11 +77,12 @@ const Header = ({ setView, view }) => {
 				</div>
 			</div>
 			<div className="header-right">
-				<div className="search">
+				{/* <div className="search">
 					<img src="./../../assets/search-icon.png" alt="plz add search img" />
-				</div>
+				</div> */}
 				<div>
 					<select id="views" className="dropdown" onChange={viewChange}>
+						<option value="none">Select</option>
 						<option value="day">Day</option>
 						<option value="week">Week</option>
 						<option value="month">Month</option>
