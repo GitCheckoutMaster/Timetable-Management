@@ -4,7 +4,7 @@ import "./TaskCardStyle.css";
 import { useMemo } from "react";
 import Popup from "reactjs-popup";
 
-const TaskCard = ({ taskDetails, widthOffset, viewWidth }) => {
+const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 	const [open, setOpen] = useState(false);
 	const [height, setHeight] = useState(20);
 	const [top, setTop] = useState(0);
@@ -66,11 +66,15 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth }) => {
 	}, [taskDetails, viewWidth]);
 
 	useEffect(() => {
-		const day = new Date(taskDetails?.session_date).getDay();
+		let day = new Date(taskDetails?.session_date).getDay();
+		if (taskDetails?.repeat_on === "monthly" && selectedDate) { 
+			day = new Date(taskDetails?.session_date).setMonth(selectedDate.getMonth());
+			day = new Date(day).getDay();
+		}
 		if (viewWidth < 930 && viewWidth > 0) {
 			setLeft(132 * (day + 1) - 133);
 		}
-	}, [taskDetails, viewWidth]);
+	}, [taskDetails, viewWidth, selectedDate]);
 
 	const closeModal = () => setOpen(false);
 

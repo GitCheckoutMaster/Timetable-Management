@@ -41,12 +41,29 @@ const DayCalendar = () => {
 	useEffect(() => {
 		const updatedTasks = tasks?.filter((task) => {
 			const taskDate = new Date(task.session_date);
-			return (
-				taskDate.getDate() == selectedDate.getDate() &&
-				taskDate.getMonth() == selectedDate.getMonth() &&
-				taskDate.getFullYear() == selectedDate.getFullYear()
-			);
+
+			const isSameDate =
+				taskDate.getDate() === selectedDate.getDate() &&
+				taskDate.getMonth() === selectedDate.getMonth() &&
+				taskDate.getFullYear() === selectedDate.getFullYear();
+
+			const isDailyRepeat = task.repeat_on === "daily";
+
+			const isWeeklyRepeat =
+				task.repeat_on === "weekly" &&
+				taskDate.getDay() === selectedDate.getDay();
+
+			const isMonthlyRepeat =
+				task.repeat_on === "monthly" &&
+				taskDate.getDate() === selectedDate.getDate();
+			
+			// if (task.repeat_on === "monthly") {
+
+			// }
+
+			return isSameDate || isDailyRepeat || isWeeklyRepeat || isMonthlyRepeat;
 		});
+
 		setCurrentTasks(updatedTasks);
 	}, [selectedDate, tasks]);
 

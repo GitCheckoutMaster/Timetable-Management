@@ -25,6 +25,7 @@ const MonthCalendar = () => {
 	const [filteredTasks, setFilteredTasks] = useState([]);
 
 	useEffect(() => {
+		// Generate 5 week grid starting from the start of this calendar view
 		const month = selectedDate?.getMonth();
 		const year = selectedDate?.getFullYear();
 
@@ -47,19 +48,10 @@ const MonthCalendar = () => {
 		);
 	}, [selectedDate]);
 
+	// Just store all tasks for filtering in render
 	useEffect(() => {
-		const updatedTasks = tasks?.filter((task) => {
-			return selectedMonths.some((date) => {
-				const taskDate = new Date(task.session_date);
-				return (
-					taskDate.getDate() === date.getDate() &&
-					taskDate.getMonth() === date.getMonth() &&
-					taskDate.getFullYear() === date.getFullYear()
-				);
-			});
-		});
-		setFilteredTasks(updatedTasks);
-	}, [tasks, selectedDate, selectedMonths]);
+		setFilteredTasks(tasks);
+	}, [tasks]);
 
 	const isToday = (date) => {
 		const now = new Date();
@@ -67,6 +59,34 @@ const MonthCalendar = () => {
 			date.getDate() === now.getDate() &&
 			date.getMonth() === now.getMonth() &&
 			date.getFullYear() === now.getFullYear()
+		);
+	};
+
+	const doesTaskAppearOnDate = (task, date) => {
+		const taskDate = new Date(task.session_date);
+
+		if (task.repeat_on === "daily") return true;
+		if (task.repeat_on === "weekly" && taskDate.getDay() === date.getDay())
+			return true;
+		if (task.repeat_on === "monthly" && taskDate.getDate() === date.getDate())
+			return true;
+
+		// Non-repeating
+		return (
+			taskDate.getDate() === date.getDate() &&
+			taskDate.getMonth() === date.getMonth() &&
+			taskDate.getFullYear() === date.getFullYear()
+		);
+	};
+
+	const isBeforeDate = (d1, d2) => {
+		return (
+			d1.getFullYear() < d2.getFullYear() ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() < d2.getMonth()) ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() === d2.getMonth() &&
+				d1.getDate() < d2.getDate())
 		);
 	};
 
@@ -101,24 +121,23 @@ const MonthCalendar = () => {
 													</span>
 												)}
 											</div>
+
 											{filteredTasks
-												.filter(
-													(task) =>
-														new Date(task.session_date).getDate() ===
-															date.getDate() &&
-														new Date(task.session_date).getMonth() ===
-															date.getMonth() &&
-														new Date(task.session_date).getFullYear() ===
-															date.getFullYear()
-												)
-												.map((task) => (
-													<TaskCard
-														key={task.id}
-														taskDetails={task}
-														widthOffset={0}
-														viewWidth={0}
-													/>
-												))}
+												?.filter((task) => doesTaskAppearOnDate(task, date))
+												.map((task) => {
+													const taskDate = new Date(task.session_date);
+													if (isBeforeDate(date, taskDate)) {
+														return null;
+													}
+													return (
+														<TaskCard
+															key={task.id}
+															taskDetails={task}
+															widthOffset={0}
+															viewWidth={0}
+														/>
+													);
+												})}
 										</div>
 									</td>
 								))}

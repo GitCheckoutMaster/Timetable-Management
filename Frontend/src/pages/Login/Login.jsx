@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 import './LoginStyle.css';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api.js';
+import React, { useState } from 'react';
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const toggleActive = (e) => {
@@ -20,8 +22,12 @@ const Login = () => {
   const loginUser = async (data) => {
     const admin = document.getElementById("butt2").classList.contains("active") ? 1 : 0;
     const res = await login({ ...data, admin });
-    if (res) {
+    // console.log(res);
+    if (res.statusCode == 200) {
+      setError(null);
       navigate("/home/day-view");
+    } else {
+      setError(res.msg || "Login failed. Please try again.");
     }
   };
 
@@ -29,6 +35,7 @@ const Login = () => {
     <div className="login-container-main">
       <div className="login-container">
         <h2 className='login-heading'>Login</h2>
+        {error && <div className='login-error-message'>{error}</div>}
         <div className="login-buttons">
           <button id='butt1' className='active' onClick={toggleActive}>Trainer</button>
           <button id="butt2" onClick={toggleActive}>Admin</button>

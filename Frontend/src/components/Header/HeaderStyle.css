@@ -19,7 +19,7 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 50px;
+  gap: 30px;
 }
 
 .logo-container {
@@ -76,8 +76,8 @@
 }
 
 .dropdown {
-  min-width: 160px;   /* wider default */
-  padding: 10px 40px 10px 20px; /* more right space for arrow */
+  min-width: 160px;
+  padding: 10px 40px 10px 20px;
   background-color: #ffffff;
   border: 2px solid #a2d5c6;
   border-radius: 30px;
@@ -100,7 +100,6 @@
   background-color: #e7f8f2;
 }
 
-
 .logout-btn {
   padding: 10px 24px;
   background-color: #e7f8f2;
@@ -118,11 +117,82 @@
   color: white;
 }
 
-.search img {
-  height: 22px;
-  width: 22px;
+/* ========= NEW CREATE BUTTON ========= */
+.create-btn {
+  background: linear-gradient(135deg, #4a7c59, #a2d5c6);
+  border: none;
+  border-radius: 35px;
+  padding: 12px 34px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 18px rgba(74, 124, 89, 0.3);
+  animation: pulse 2s infinite;
 }
 
-.search {
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(74, 124, 89, 0.4);
+}
+
+/* Improved subtle pulse effect */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 124, 89, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 124, 89, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 124, 89, 0);
+  }
+}
+
+
+.user-info {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #a2d5c6;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.user-info:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.user-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tooltip-like username on hover */
+.user-info::after {
+  content: attr(data-username);
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4a7c59;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.user-info:hover::after {
+  opacity: 1;
+  bottom: -45px;
 }

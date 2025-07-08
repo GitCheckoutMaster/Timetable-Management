@@ -1,15 +1,18 @@
 /* eslint-disable no-unused-vars */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./HeaderStyle.css";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../../api.js";
+import CreateTask from "../CreateTask/CreateTask.jsx";
 
-const Header = ({ setView, view }) => {
+const Header = ({ setView, view, trainerId }) => {
 	const today = new Date();
 	const formattedDate = today.toLocaleDateString();
 	const navigate = useNavigate();
 	const location = useLocation();
+	const [createPopupOpen, setCreatePopupOpen] = useState(false);
+	const user = JSON.parse(localStorage.getItem("user"));
 
 	const behind_change = () => {};
 	const ahead_change = () => {};
@@ -77,9 +80,14 @@ const Header = ({ setView, view }) => {
 				</div>
 			</div>
 			<div className="header-right">
-				{/* <div className="search">
-					<img src="./../../assets/search-icon.png" alt="plz add search img" />
-				</div> */}
+				<div
+					className="create-btn"
+					style={{ display: user.admin == 1 ? "flex" : "none" }}
+					onClick={() => setCreatePopupOpen(true)}
+				>
+					Create
+				</div>
+				<CreateTask createOpen={createPopupOpen} setCreateOpen={setCreatePopupOpen} trainer_id={trainerId} />
 				<div>
 					<select id="views" className="dropdown" onChange={viewChange}>
 						<option value="none">Select</option>
@@ -88,7 +96,16 @@ const Header = ({ setView, view }) => {
 						<option value="month">Month</option>
 					</select>
 				</div>
-				<button className="logout-btn" onClick={logoutHandler}>Logout</button>
+				<button className="logout-btn" onClick={logoutHandler}>
+					Logout
+				</button>
+				<div className="user-info" data-username="John Doe">
+					<img
+						src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9diqk263eRrAF-z0Q5aW5-9NEU30kObI4Lg&s"
+						alt="User"
+						className="user-image"
+					/>
+				</div>
 			</div>
 		</div>
 	);

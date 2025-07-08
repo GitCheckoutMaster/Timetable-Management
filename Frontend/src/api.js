@@ -8,12 +8,13 @@ const api = axios.create( {
 export const login = async (data) => {
   return await api.post("/user/login", data, { withCredentials: true })
     .then((response) => {
-      // console.log("Login successful: ", response.data);
+      console.log("Login successful: ", response.data);
       localStorage.setItem("user", JSON.stringify(response.data.data));
-      return response.data.data;
+      return response.data;
     })
     .catch((error) => {
       console.error("Login failed: ", error.response ? error.response.data : error.message);
+      return error.response ? error.response.data : error.message;
     });
 }
 
@@ -71,5 +72,17 @@ export const getAllTrainers = async () => {
     })
     .catch((error) => {
       console.error("Failed to fetch trainers: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const createTask = async (data) => {
+  console.log("Creating task with data: ", data);
+  return await api.post("/tasks/createTask", data, { withCredentials: true })
+    .then((response) => {
+      // console.log("Task created successfully: ", response.data);
+      return response.data.data;
+    })
+    .catch((error) => {
+      console.error("Failed to create task: ", error.response ? error.response.data : error.message);
     });
 }

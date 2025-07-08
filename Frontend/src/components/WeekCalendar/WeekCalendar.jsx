@@ -34,17 +34,63 @@ const WeekCalendar = () => {
 
 	// Filter tasks for this week
 	useEffect(() => {
-		const updatedTasks = tasks?.filter((task) => {
+		let updatedTasks = tasks?.filter((task) => {
 			const taskDate = new Date(task.session_date);
-			return selectedWeek.some(
-				(date) =>
+
+			return selectedWeek.some((date) => {
+				const isSameDate =
 					date.getDate() === taskDate.getDate() &&
 					date.getMonth() === taskDate.getMonth() &&
-					date.getFullYear() === taskDate.getFullYear()
-			);
+					date.getFullYear() === taskDate.getFullYear();
+
+				const isWeeklyRepeat =
+					task.repeat_on === "weekly" && date.getDay() === taskDate.getDay();
+
+				const isMonthlyRepeat =
+					task.repeat_on === "monthly" && date.getDate() === taskDate.getDate();
+
+				return (
+					isSameDate ||
+					task.repeat_on === "daily" ||
+					isWeeklyRepeat ||
+					isMonthlyRepeat
+				);
+			});
 		});
+
+		const dailyTasks = tasks?.filter((task) => task.repeat_on === "daily");
+
+		updatedTasks = updatedTasks?.filter((task) => task.repeat_on !== "daily");
+
+		console.log("Updated Tasks:", updatedTasks);
+
+		const totalDailyTasksThisWeek = dailyTasks?.map((task) => {
+			return selectedWeek.map((date) => {
+				const newTask = { ...task };
+				newTask.session_date = date.toISOString().split("T")[0];
+				newTask.session_start_time = new Date(
+					date.getFullYear(),
+					date.getMonth(),
+					date.getDate(),
+					task.session_start_time.split(" ")[1].split(":")[0],
+					task.session_start_time.split(" ")[1].split(":")[1]
+				).toISOString();
+				newTask.session_end_time = new Date(
+					date.getFullYear(),
+					date.getMonth(),
+					date.getDate(),
+					task.session_end_time.split(" ")[1].split(":")[0],
+					task.session_end_time.split(" ")[1].split(":")[1]
+				).toISOString();
+				return newTask;
+			});
+		});
+
+		const flatDailyTasks = totalDailyTasksThisWeek?.flat() || [];
+		const combinedTasks = [...(updatedTasks || []), ...flatDailyTasks];
+
 		setCurrentTasks(
-			updatedTasks?.sort(
+			combinedTasks?.sort(
 				(a, b) =>
 					new Date(a.session_start_time) - new Date(b.session_start_time)
 			)
@@ -137,6 +183,7 @@ const WeekCalendar = () => {
 										taskDetails={task}
 										widthOffset={width}
 										viewWidth={123.8}
+										selectedDate={selectedDate}
 									/>
 								);
 							} else {
@@ -149,6 +196,7 @@ const WeekCalendar = () => {
 									taskDetails={task}
 									widthOffset={width}
 									viewWidth={133.8}
+									selectedDate={selectedDate}
 								/>
 							);
 						})}

@@ -121,7 +121,7 @@
   background: #ff6961;
   border-radius: 2px;
   box-shadow: 0 0 6px rgba(255,105,97,0.5);
-  z-index: 10;
+  z-index: 1001;
 }
 
 /* Reusable task item style (sidebar & calendar) */
