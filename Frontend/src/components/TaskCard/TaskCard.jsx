@@ -67,12 +67,13 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 
 	useEffect(() => {
 		let day = new Date(taskDetails?.session_date).getDay();
+		// console.log("Day of the week:", taskDetails?.session_date);
 		if (taskDetails?.repeat_on === "monthly" && selectedDate) { 
 			day = new Date(taskDetails?.session_date).setMonth(selectedDate.getMonth());
 			day = new Date(day).getDay();
 		}
 		if (viewWidth < 930 && viewWidth > 0) {
-			setLeft(132 * (day + 1) - 133);
+			setLeft(133 * (day + 1) - 133);
 		}
 	}, [taskDetails, viewWidth, selectedDate]);
 

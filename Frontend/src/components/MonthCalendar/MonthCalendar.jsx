@@ -90,6 +90,17 @@ const MonthCalendar = () => {
 		);
 	};
 
+	const isAfterDate = (d1, d2) => {
+		return (
+			d1.getFullYear() > d2.getFullYear() ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() > d2.getMonth()) ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() === d2.getMonth() &&
+				d1.getDate() > d2.getDate())
+		);
+	};
+
 	return (
 		<div className="month-calendar">
 			<div className="month-calendar-header">
@@ -126,9 +137,23 @@ const MonthCalendar = () => {
 												?.filter((task) => doesTaskAppearOnDate(task, date))
 												.map((task) => {
 													const taskDate = new Date(task.session_date);
-													if (isBeforeDate(date, taskDate)) {
-														return null;
+													if (task.repeat_on !== "none") {
+														const repeatEnd = new Date(task.repeat_end);
+														if (
+															isBeforeDate(date, taskDate) ||
+															isAfterDate(date, repeatEnd)
+														) {
+															return null;
+														}
+													} else {
+														if (
+															isBeforeDate(date, taskDate) ||
+															isAfterDate(date, taskDate)
+														) {
+															return null;
+														}
 													}
+
 													return (
 														<TaskCard
 															key={task.id}

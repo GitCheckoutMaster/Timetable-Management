@@ -80,7 +80,7 @@ export const createTask = async (data) => {
   return await api.post("/tasks/createTask", data, { withCredentials: true })
     .then((response) => {
       // console.log("Task created successfully: ", response.data);
-      return response.data.data;
+      return response.data;
     })
     .catch((error) => {
       console.error("Failed to create task: ", error.response ? error.response.data : error.message);

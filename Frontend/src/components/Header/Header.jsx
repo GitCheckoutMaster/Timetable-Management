@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../../api.js";
 import CreateTask from "../CreateTask/CreateTask.jsx";
 
-const Header = ({ setView, view, trainerId }) => {
+const Header = ({ setView, view, setTasks }) => {
 	const today = new Date();
 	const formattedDate = today.toLocaleDateString();
 	const navigate = useNavigate();
@@ -82,12 +82,12 @@ const Header = ({ setView, view, trainerId }) => {
 			<div className="header-right">
 				<div
 					className="create-btn"
-					style={{ display: user.admin == 1 ? "flex" : "none" }}
+					style={{ display: user.admin == 1 ? "none" : "flex" }}
 					onClick={() => setCreatePopupOpen(true)}
 				>
 					Create
 				</div>
-				<CreateTask createOpen={createPopupOpen} setCreateOpen={setCreatePopupOpen} trainer_id={trainerId} />
+				<CreateTask createOpen={createPopupOpen} setCreateOpen={setCreatePopupOpen} trainer_id={user.id} setTasks={setTasks} />
 				<div>
 					<select id="views" className="dropdown" onChange={viewChange}>
 						<option value="none">Select</option>

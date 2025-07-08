@@ -15,7 +15,32 @@ const WeekCalendar = () => {
 		today.getHours() * 60 + today.getMinutes()
 	);
 
+	// ----------------------
+	// Helpers
+	// ----------------------
+	const getDatesBetween = (startDate, endDate) => {
+		const dates = [];
+		const currentDate = new Date(startDate);
+		currentDate.setHours(0, 0, 0, 0);
+		endDate.setHours(0, 0, 0, 0);
+
+		while (currentDate <= endDate) {
+			dates.push(new Date(currentDate));
+			currentDate.setDate(currentDate.getDate() + 1);
+		}
+		return dates;
+	};
+
+	const formatDate = (date) => {
+		const pad = (n) => (n < 10 ? "0" + n : n);
+		return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+			date.getDate()
+		)}`;
+	};
+
+	// ----------------------
 	// Calculate week days
+	// ----------------------
 	useEffect(() => {
 		const day = selectedDate?.getDay();
 		const date = selectedDate?.getDate();
@@ -32,73 +57,143 @@ const WeekCalendar = () => {
 		);
 	}, [selectedDate]);
 
-	// Filter tasks for this week
+	// ----------------------
+	// Filter & generate tasks for this week
+	// ----------------------
 	useEffect(() => {
-		let updatedTasks = tasks?.filter((task) => {
-			const taskDate = new Date(task.session_date);
+		let updatedTasks = [];
 
-			return selectedWeek.some((date) => {
-				const isSameDate =
-					date.getDate() === taskDate.getDate() &&
-					date.getMonth() === taskDate.getMonth() &&
-					date.getFullYear() === taskDate.getFullYear();
-
-				const isWeeklyRepeat =
-					task.repeat_on === "weekly" && date.getDay() === taskDate.getDay();
-
-				const isMonthlyRepeat =
-					task.repeat_on === "monthly" && date.getDate() === taskDate.getDate();
-
-				return (
-					isSameDate ||
-					task.repeat_on === "daily" ||
-					isWeeklyRepeat ||
-					isMonthlyRepeat
-				);
-			});
-		});
-
-		const dailyTasks = tasks?.filter((task) => task.repeat_on === "daily");
-
-		updatedTasks = updatedTasks?.filter((task) => task.repeat_on !== "daily");
-
-		console.log("Updated Tasks:", updatedTasks);
-
-		const totalDailyTasksThisWeek = dailyTasks?.map((task) => {
-			return selectedWeek.map((date) => {
-				const newTask = { ...task };
-				newTask.session_date = date.toISOString().split("T")[0];
-				newTask.session_start_time = new Date(
-					date.getFullYear(),
-					date.getMonth(),
-					date.getDate(),
-					task.session_start_time.split(" ")[1].split(":")[0],
-					task.session_start_time.split(" ")[1].split(":")[1]
-				).toISOString();
-				newTask.session_end_time = new Date(
-					date.getFullYear(),
-					date.getMonth(),
-					date.getDate(),
-					task.session_end_time.split(" ")[1].split(":")[0],
-					task.session_end_time.split(" ")[1].split(":")[1]
-				).toISOString();
-				return newTask;
-			});
-		});
-
-		const flatDailyTasks = totalDailyTasksThisWeek?.flat() || [];
-		const combinedTasks = [...(updatedTasks || []), ...flatDailyTasks];
-
-		setCurrentTasks(
-			combinedTasks?.sort(
-				(a, b) =>
-					new Date(a.session_start_time) - new Date(b.session_start_time)
-			)
+		// Non-repeating tasks
+		let nonRepeatingTasks = tasks?.filter(
+			(task) =>
+				task.repeat_on === "none" &&
+				selectedWeek.some((date) => {
+					const taskDate = new Date(task.session_date);
+					return (
+						taskDate.getDate() === date.getDate() &&
+						taskDate.getMonth() === date.getMonth() &&
+						taskDate.getFullYear() === date.getFullYear()
+					);
+				})
 		);
-	}, [tasks, selectedWeek]);
+		updatedTasks.push(...(nonRepeatingTasks || []));
 
-	// Current time line position
-	// const linePos = (minutesOfCurrentDay / 60) * 70;
+		// Daily tasks
+		let dailyTasks = tasks?.filter((task) => task.repeat_on === "daily");
+		dailyTasks.forEach((task) => {
+			const taskDate = new Date(task.session_date);
+			const endDate = new Date(task.repeat_end);
+			const datesInRange = getDatesBetween(taskDate, endDate);
+
+			const intersection = datesInRange.filter((date) =>
+				selectedWeek.some(
+					(selectedDate) =>
+						date.getDate() === selectedDate.getDate() &&
+						date.getMonth() === selectedDate.getMonth() &&
+						date.getFullYear() === selectedDate.getFullYear()
+				)
+			);
+
+			intersection.forEach((date) => {
+				const startTime = new Date(date);
+				const endTime = new Date(date);
+				startTime.setHours(
+					new Date(task.session_start_time).getHours(),
+					new Date(task.session_start_time).getMinutes(),
+					0, 0
+				);
+				endTime.setHours(
+					new Date(task.session_end_time).getHours(),
+					new Date(task.session_end_time).getMinutes(),
+					0, 0
+				);
+
+				updatedTasks.push({
+					...task,
+					id: `${task.id}-daily-${formatDate(date)}`, // unique id
+					session_date: formatDate(date),
+					session_start_time: startTime.toISOString().slice(0,19).replace("T"," "),
+					session_end_time: endTime.toISOString().slice(0,19).replace("T"," "),
+				});
+			});
+		});
+
+		// Weekly tasks
+		let weeklyTasks = tasks?.filter((task) => task.repeat_on === "weekly");
+		weeklyTasks.forEach((task) => {
+			const taskDate = new Date(task.session_date);
+			const taskEndDate = new Date(task.repeat_end);
+			selectedWeek.forEach((date) => {
+				if (
+					taskDate.getDay() === date.getDay() &&
+					taskDate <= date &&
+					date <= taskEndDate
+				) {
+					const startTime = new Date(date);
+					const endTime = new Date(date);
+					startTime.setHours(
+						new Date(task.session_start_time).getHours(),
+						new Date(task.session_start_time).getMinutes(),
+						0, 0
+					);
+					endTime.setHours(
+						new Date(task.session_end_time).getHours(),
+						new Date(task.session_end_time).getMinutes(),
+						0, 0
+					);
+
+					updatedTasks.push({
+						...task,
+						id: `${task.id}-weekly-${formatDate(date)}`,
+						session_date: formatDate(date),
+						session_start_time: startTime.toISOString().slice(0,19).replace("T"," "),
+						session_end_time: endTime.toISOString().slice(0,19).replace("T"," "),
+					});
+				}
+			});
+		});
+
+		// Monthly tasks
+		let monthlyTasks = tasks?.filter((task) => task.repeat_on === "monthly");
+		monthlyTasks.forEach((task) => {
+			const taskDate = new Date(task.session_date);
+			const taskEndDate = new Date(task.repeat_end);
+			selectedWeek.forEach((date) => {
+				if (
+					taskDate.getDate() === date.getDate() &&
+					taskDate <= date &&
+					date <= taskEndDate
+				) {
+					const startTime = new Date(date);
+					const endTime = new Date(date);
+					startTime.setHours(
+						new Date(task.session_start_time).getHours(),
+						new Date(task.session_start_time).getMinutes(),
+						0, 0
+					);
+					endTime.setHours(
+						new Date(task.session_end_time).getHours(),
+						new Date(task.session_end_time).getMinutes(),
+						0, 0
+					);
+
+					updatedTasks.push({
+						...task,
+						id: `${task.id}-monthly-${formatDate(date)}`,
+						session_date: formatDate(date),
+						session_start_time: startTime.toISOString().slice(0,19).replace("T"," "),
+						session_end_time: endTime.toISOString().slice(0,19).replace("T"," "),
+					});
+				}
+			});
+		});
+
+		setCurrentTasks(updatedTasks);
+	}, [tasks, selectedWeek, selectedDate]);
+
+	// ----------------------
+	// Live line
+	// ----------------------
 	const linePos = minutesOfCurrentDay * 1.17;
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -109,10 +204,6 @@ const WeekCalendar = () => {
 		return () => clearInterval(timer);
 	}, []);
 
-	const changeSelectedDate = (date) => {
-		// You can set this to update `selectedDate` in parent if needed
-	};
-
 	return (
 		<div className="week-calendar">
 			<div className="week-calendar-header">
@@ -121,7 +212,6 @@ const WeekCalendar = () => {
 					{selectedWeek.map((date, index) => (
 						<div key={index} className="week-calendar-heading">
 							<h2
-								onClick={() => changeSelectedDate(date)}
 								className={
 									new Date().getDate() === date.getDate() &&
 									new Date().getMonth() === date.getMonth() &&
@@ -168,34 +258,18 @@ const WeekCalendar = () => {
 								}}
 							></div>
 						)}
-						{currentTasks?.map((task, idx, arr) => {
-							const prevTask = idx > 0 ? arr[idx - 1] : null;
-							const prevTaskEndTime = prevTask
-								? new Date(prevTask.session_end_time)
-								: null;
-							const startTime = new Date(task.session_start_time);
-
-							if (prevTaskEndTime && prevTaskEndTime > startTime) {
-								width += 10;
-								return (
-									<TaskCard
-										key={task.id}
-										taskDetails={task}
-										widthOffset={width}
-										viewWidth={123.8}
-										selectedDate={selectedDate}
-									/>
-								);
-							} else {
-								width = 0;
-							}
-
+						{currentTasks?.map((task) => {
+							console.log("Rendering task:", {
+								id: task.id,
+								date: task.session_date,
+								start: task.session_start_time
+							});
 							return (
 								<TaskCard
 									key={task.id}
 									taskDetails={task}
 									widthOffset={width}
-									viewWidth={133.8}
+									viewWidth={123.8}
 									selectedDate={selectedDate}
 								/>
 							);

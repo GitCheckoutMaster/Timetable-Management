@@ -56,10 +56,6 @@ const DayCalendar = () => {
 			const isMonthlyRepeat =
 				task.repeat_on === "monthly" &&
 				taskDate.getDate() === selectedDate.getDate();
-			
-			// if (task.repeat_on === "monthly") {
-
-			// }
 
 			return isSameDate || isDailyRepeat || isWeeklyRepeat || isMonthlyRepeat;
 		});
@@ -72,6 +68,29 @@ const DayCalendar = () => {
 			return new Date(a.session_start_time) - new Date(b.session_start_time);
 		});
 	}, [currentTasks]);
+
+	const isBeforeDate = (d1, d2) => {
+		return (
+			d1.getFullYear() < d2.getFullYear() ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() < d2.getMonth()) ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() === d2.getMonth() &&
+				d1.getDate() < d2.getDate())
+		);
+	};
+
+	const isAfterDate = (d1, d2) => {
+		if (!d1 || !d2) return false;
+		return (
+			d1.getFullYear() > d2.getFullYear() ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() > d2.getMonth()) ||
+			(d1.getFullYear() === d2.getFullYear() &&
+				d1.getMonth() === d2.getMonth() &&
+				d1.getDate() > d2.getDate())
+		);
+	}
 
 	return (
 		<div className="day-calendar">
@@ -107,6 +126,7 @@ const DayCalendar = () => {
 							? new Date(prevTask.session_end_time)
 							: null;
 						const startTime = new Date(task.session_start_time);
+						const endTime = new Date(task.repeat_end);
 
 						if (prevTaskEndTime && prevTaskEndTime > startTime) {
 							width += 100;
@@ -120,6 +140,12 @@ const DayCalendar = () => {
 							);
 						} else {
 							width = 0;
+						}
+						if (isBeforeDate(selectedDate, startTime)) {
+							return null;
+						}
+						if (isAfterDate(selectedDate, endTime)) {
+							return null;
 						}
 
 						return (

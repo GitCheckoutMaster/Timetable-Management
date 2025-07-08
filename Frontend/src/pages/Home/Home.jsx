@@ -18,7 +18,6 @@ const Home = () => {
 	const navigate = useNavigate();
 	const [upcomingTasks, setUpcomingTasks] = useState([]);
 	const [trainers, setTrainers] = useState([]);
-	const [trainerId, setTrainerId] = useState(null);
 	const user = JSON.parse(localStorage.getItem("user"));
 	const selectStyles = {
 		control: (provided, state) => ({
@@ -134,14 +133,13 @@ const Home = () => {
 
 	// trainer select change handler
 	const handleTrainerChange = async (selectedOption) => {
-		setTrainerId(selectedOption.value);
 		const updatedTasks = await getTaskById(selectedOption.value);
 		setTasks(updatedTasks);
 	};
 
 	return (
 		<div className="home-container">
-			<Header setView={setView} view={view} trainerId={trainerId} />
+			<Header setView={setView} view={view} setTasks={setTasks} />
 			<div className="calendar-container">
 				<div className="user-sidebar">
 					<Calendar onChange={setSelectedDate} value={selectedDate} />
