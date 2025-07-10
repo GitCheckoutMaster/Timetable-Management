@@ -48,20 +48,24 @@ export const createTask = async (req, res) => {
 		return res.status(400).json(new ApiError(400, "All fields are required"));
 	}
 
-	if (
-		new Date(session_start_time) >= new Date(session_end_time) &&
-		repeat_on === "none" && session_date > new Date().toISOString().split("T")[0]
-	) {
-		return res.status(400).json(
-			new ApiError(400, "Session start time must be before session end time")
-		);
-	}
+	// check for overlapping sessions
+	const checkOverlapQuery = `SELECT * FROM trainer_utilization WHERE trainer_id = ? AND session_date = ? AND (session_start_time < ? AND session_end_time > ?)`;
 
-	if (new Date(session_start_time) < new Date() && repeat_on === "none" &&
-		session_date > new Date().toISOString().split("T")[0]) {
-		return res.status(400).json(
-			new ApiError(400, "Session start time cannot be in the past")
-		);
+	try {
+		const [overlapResults] = await connection.query(checkOverlapQuery, [
+			trainer_id,
+			session_date.split(" ")[0],
+			session_end_time,
+			session_start_time,
+		]);
+		if (overlapResults.length > 0) {
+			return res.status(400).json(
+				new ApiError(400, "This session overlaps with an existing session")
+			);
+		}
+	} catch (error) {
+		console.error("Database overlap check error:", error);
+		return res.status(500).json(new ApiError(500, "Internal server error"));
 	}
 
 	const query = `

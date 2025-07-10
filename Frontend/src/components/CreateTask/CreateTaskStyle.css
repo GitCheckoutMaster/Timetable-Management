@@ -133,6 +133,17 @@
 	margin-bottom: 0.6rem;
 }
 
+.create-task-error {
+	color: #ff4d4d;
+	background: rgba(255, 77, 77, 0.1);
+	border: 1px solid #ff4d4d;
+	padding: 0.8rem;
+	border-radius: 10px;
+	text-align: center;
+	margin-top: 1rem;
+	font-size: 0.9rem;
+}
+
 @keyframes fadeInUp {
 	from {
 		opacity: 0;

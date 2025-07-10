@@ -13,6 +13,7 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 	const [repeatEnd, setRepeatEnd] = useState(false);
 	const [customOpen, setCustomOpen] = useState(false);
 	const [customTasks, setCustomTasks] = useState([]);
+	const [error, setError] = useState(null);
 	const weekNames = [
 		"Sunday",
 		"Monday",
@@ -60,6 +61,16 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 			end_time,
 		} = data;
 		const endDate = repeat_end ? new Date(repeat_end) : null;
+
+		if (!course_name || !session_date || !start_time || !end_time) {
+			setError("All fields are required.");
+			return;
+		}
+		if (new Date(session_date) < new Date()) {
+			setError("Session date cannot be in the past.");
+			return;
+		}
+		
 
 		let tasksToCreate = [];
 
@@ -127,7 +138,7 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 				console.log("Creating task:", payload);
 				const res = await createTask(payload);
 				if (res?.statusCode !== 201) {
-					alert("Failed to create task");
+					setError(res?.msg || "Failed to create task");
 					return;
 				}
 				setTasks((prev) => [
@@ -138,13 +149,13 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 					},
 				]);
 			}
-
+			setError(null);
 			setCustomTasks([]);
 			setCustomOpen(false);
 			setCreateOpen(false);
 		} catch (err) {
 			console.error("Task creation failed:", err);
-			alert("Something went wrong creating tasks.");
+			setError(err.data.msg || "Failed to create task");
 		}
 	};
 
@@ -164,7 +175,7 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 				>
 					<IoClose size={22} />
 				</button>
-
+				{error && <div className="create-task-error">{error}</div>}
 				<h2>Create New Task</h2>
 				<form
 					className="create-task-form"

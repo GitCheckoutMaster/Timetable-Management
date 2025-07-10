@@ -104,6 +104,7 @@ export const createTask = async (data) => {
         return;
       }
       console.error("Failed to create task: ", error.response ? error.response.data : error.message);
+      return error.response ? error.response.data : error.message;
     });
 }
 
