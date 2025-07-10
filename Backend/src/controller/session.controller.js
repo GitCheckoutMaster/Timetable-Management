@@ -1,9 +1,8 @@
-import asyncHandler from "../utils/asyncHandler.js";
 import connection from "../db/db.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 
-export const createSession = asyncHandler(async (req, res) => {
+export const createSession = (async (req, res) => {
   const { task_id, session_start, trainer_id } = req.body;
   if (!task_id || !session_start || !trainer_id) {
     return res.status(400).json(new ApiError(400, "All fields are required"));
@@ -36,7 +35,7 @@ export const createSession = asyncHandler(async (req, res) => {
 });
 
 
-export const getSessions = asyncHandler(async (req, res) => {
+export const getSessions = async (req, res) => {
   const query = `SELECT * FROM sessions`;
   
   connection.query(query, (err, results) => {
@@ -45,9 +44,9 @@ export const getSessions = asyncHandler(async (req, res) => {
     }
     return res.status(200).json(new ApiResponse(200, "Sessions fetched successfully", { sessions: results }));
   });
-});
+};
 
-export const getSessionById = asyncHandler(async (req, res) => {
+export const getSessionById = (async (req, res) => {
   const { sessionId } = req.params;
   const query = `SELECT * FROM sessions WHERE id = ?`;
   connection.query(query, [sessionId], (err, results) => {
@@ -61,7 +60,7 @@ export const getSessionById = asyncHandler(async (req, res) => {
   });
 });
 
-export const updateSessionById = asyncHandler(async (req, res) => {
+export const updateSessionById = (async (req, res) => {
   const { sessionId } = req.params;
   const { session_end } = req.body;
 

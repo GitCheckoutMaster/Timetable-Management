@@ -1,0 +1,74 @@
+/* PastSessionsStyle.css */
+
+.past-sessions-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: auto;
+  font-family: 'Poppins', sans-serif;
+}
+
+.past-sessions-container h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #444;
+}
+
+.loader {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.no-sessions {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #777;
+}
+
+.sessions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.session-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  
+  background: rgba(162, 213, 198, 0.25);
+  backdrop-filter: blur(6px);
+  border-radius: 1rem;
+  padding: 1.2rem 2rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.session-card h3 {
+  font-size: 1.4rem;
+  color: #333;
+  flex: 2;
+}
+
+.session-card p {
+  margin: 0 1rem;
+  font-size: 0.95rem;
+  color: #555;
+  flex: 1;
+}
+
+.session-card .status.completed {
+  color: #3ba55d;
+  font-weight: 600;
+}
+.session-card .status.incomplete {
+  color: #f44336;
+  font-weight: 600;
+}

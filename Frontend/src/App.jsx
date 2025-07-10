@@ -7,6 +7,7 @@ import WeekCalendar from './components/WeekCalendar/WeekCalendar.jsx';
 import MonthCalendar from './components/MonthCalendar/MonthCalendar.jsx';
 import RegisterTrainer from './components/RegisterTrainer/RegisterTrainer.jsx';
 import Session from './components/SessionManagement/Session.jsx';
+import PastSessions from './components/PastSessions/PastSessions.jsx';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path='month-view' element={<MonthCalendar />} />
           <Route path='register-trainer' element={<RegisterTrainer />} />
           <Route path='session' element={<Session />} />
+          <Route path='past-sessions' element={<PastSessions />} />
         </Route>
         <Route path='/login' element={<Login />} />
       </Routes>

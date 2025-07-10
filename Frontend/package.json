@@ -12,6 +12,7 @@
   "dependencies": {
     "@mobiscroll/react": "npm:@mobiscroll/react-next-trial@^5.34.2",
     "axios": "^1.10.0",
+    "nodemailer": "^7.0.5",
     "react": "^19.1.0",
     "react-calendar": "^6.0.0",
     "react-dom": "^19.1.0",

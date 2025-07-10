@@ -1,9 +1,18 @@
-import asyncHandler from "../utils/asyncHandler.js";
 import connection from "../db/db.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
+import nodemailer from "nodemailer";
 
-export const getAllTasks = asyncHandler(async (req, res) => {
+const transporter = nodemailer.createTransport({
+	service: "gmail",
+	port: 587,
+	auth: {
+		user: "jay.mistrylearnig@gmail.com",
+		pass: "ytgqvykzsduaxhli",
+	},
+});
+
+export const getAllTasks = (async (req, res) => {
 	const query = "SELECT * FROM trainer_utilization WHERE trainer_id = ?";
 	const userId = req.user.id;
 
@@ -21,7 +30,7 @@ export const getAllTasks = asyncHandler(async (req, res) => {
 	});
 });
 
-export const createTask = asyncHandler(async (req, res) => {
+export const createTask = (async (req, res) => {
 	const {
 		course_name,
 		session_start_time,
@@ -104,7 +113,7 @@ export const createTask = asyncHandler(async (req, res) => {
 	);
 });
 
-export const updateTask = asyncHandler(async (req, res) => {
+export const updateTask = (async (req, res) => {
 	const { taskId } = req.params;
 
 	const {
@@ -180,7 +189,7 @@ export const updateTask = asyncHandler(async (req, res) => {
 	);
 })
 
-export const deleteTask = asyncHandler(async (req, res) => {
+export const deleteTask = (async (req, res) => {
 	const { taskId } = req.params;
 
 	if (!taskId) {
@@ -202,3 +211,25 @@ export const deleteTask = asyncHandler(async (req, res) => {
 		return res.status(200).json(new ApiResponse(200, "Task deleted successfully"));
 	});
 })
+
+export const sendEmail = async (req, res) => {
+	const { task } = req.body;
+
+	if (!task || !task.course_name || !task.session_start_time) {
+		return res.status(400).json(new ApiError(400, "Task details are required"));
+	}
+
+	const info = await transporter?.sendMail({
+	  from: 'jay.mistrylearnig@gmail.com',
+	  to: "omvjoshi297@gmail.com",
+	  subject: "Hello ✔",
+	  text: `Hello world? ${task?.course_name} is on ${task?.session_start_time}`, // plain‑text body
+	});
+
+	console.log("Message sent: ", info);
+
+	if (!info) {
+		return res.status(500).json(new ApiError(500, "Failed to send email"));
+	}
+	return res.status(200).json(new ApiResponse(200, "Email sent successfully"));
+}

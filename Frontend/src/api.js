@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import axios from "axios";
 
 const api = axios.create( {
@@ -50,6 +49,11 @@ export const getAllTasks = async () => {
       return response.data.data.tasks;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to fetch tasks: ", error.response ? error.response.data : error.message);
     });
 }
@@ -61,6 +65,11 @@ export const getTaskById = async (userId) => {
       return response.data.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to fetch task: ", error.response ? error.response.data : error.message);
     });
 }
@@ -72,6 +81,11 @@ export const getAllTrainers = async () => {
       return response.data.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to fetch trainers: ", error.response ? error.response.data : error.message);
     });
 }
@@ -84,6 +98,11 @@ export const createTask = async (data) => {
       return response.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to create task: ", error.response ? error.response.data : error.message);
     });
 }
@@ -95,6 +114,11 @@ export const createSession = async (data) => {
       return response.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to create session: ", error.response ? error.response.data : error.message);
     });
 }
@@ -106,6 +130,11 @@ export const getAllSessions = async () => {
       return response.data.data.sessions;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to fetch sessions: ", error.response ? error.response.data : error.message);
     });
 }
@@ -117,6 +146,11 @@ export const updateSessionById = async (sessionId, data) => {
       return response.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to update session: ", error.response ? error.response.data : error.message);
     });
 }
@@ -128,6 +162,11 @@ export const getSessionById = async (sessionId) => {
       return response.data.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to fetch session: ", error.response ? error.response.data : error.message);
     });
 }
@@ -139,6 +178,11 @@ export const updateTask = async (tasksId, data) => {
       return response.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to update task: ", error.response ? error.response.data : error.message);
     });
 }
@@ -150,6 +194,27 @@ export const deleteTask = async (taskId) => {
       return response.data;
     })
     .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
       console.error("Failed to delete task: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const sendEmail = async (task) => {
+  return await api.post("/tasks/sendEmail", {task}, { withCredentials: true })
+    .then((response) => {
+      // console.log("Email sent successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
+      console.error("Failed to send email: ", error.response ? error.response.data : error.message);
     });
 }

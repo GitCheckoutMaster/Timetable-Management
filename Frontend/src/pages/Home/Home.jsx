@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import "./HomeStyle.css";
 import Header from "../../components/Header/Header";
 
@@ -7,9 +6,16 @@ import Calendar from "react-calendar";
 import "./../../../node_modules/react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllTasks, getAllTrainers, getTaskById } from "../../api.js";
+import { getAllTasks, getAllTrainers, getTaskById, sendEmail } from "../../api.js";
 import Select from "react-select";
 import { Outlet } from "react-router-dom";
+
+
+const sendReminder = async (task) => {
+	console.log("Sending email for ", task);
+	const res = await sendEmail(task);
+	console.log("Email sent response: ", res);
+}
 
 const Home = () => {
 	const [selectedDate, setSelectedDate] = useState(new Date());
@@ -126,7 +132,10 @@ const Home = () => {
 			)
 			?.sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
 			?.slice(0, 5);
-
+		
+		if (upcoming.length > 0) {
+			sendReminder(upcoming[0]);
+		}
 		setUpcomingTasks(upcoming);
 	}, [tasks]);
 
@@ -149,32 +158,67 @@ const Home = () => {
 					>
 						Session Management
 					</div>
+					<div
+						className="past-sessions"
+						style={{ display: user?.admin == 0 ? "block" : "none" }}
+						onClick={() => navigate("/home/past-sessions")}
+					>
+						Past Sessions
+					</div>
+
 					{user && user.admin == 0 ? (
 						<div className="upcoming-tasks">
 							<h3>Upcoming Tasks</h3>
 							<ul>
 								{upcomingTasks.length > 0 ? (
-									upcomingTasks.map((task) => (
-										<li key={task._id} className="task-item">
-											<div className="task-info">
-												<div className="task-title">{task.course_name}</div>
-												<div className="task-time">
-													{new Date(task.session_start_time).toLocaleTimeString(
-														[],
-														{ hour: "2-digit", minute: "2-digit" }
-													)}
-													{" - "}
-													{new Date(task.session_end_time).toLocaleTimeString(
-														[],
-														{ hour: "2-digit", minute: "2-digit" }
-													)}
-												</div>
+									// upcomingTasks.map((task) => (
+									// 	<li key={task._id} className="task-item">
+									// 		<div className="task-info">
+									// 			<div className="task-title">{task.course_name}</div>
+									// 			<div className="task-time">
+									// 				{new Date(task.session_start_time).toLocaleTimeString(
+									// 					[],
+									// 					{ hour: "2-digit", minute: "2-digit" }
+									// 				)}
+									// 				{" - "}
+									// 				{new Date(task.session_end_time).toLocaleTimeString(
+									// 					[],
+									// 					{ hour: "2-digit", minute: "2-digit" }
+									// 				)}
+									// 			</div>
+									// 		</div>
+									// 		<div className="task-date">
+									// 			{new Date(task.session_date).toLocaleDateString()}
+									// 		</div>
+									// 	</li>
+									// ))
+									<li key={upcomingTasks[0]._id} className="task-item">
+										<div className="task-info">
+											<div className="task-title">
+												{upcomingTasks[0].course_name}
 											</div>
-											<div className="task-date">
-												{new Date(task.session_date).toLocaleDateString()}
+											<div className="task-time">
+												{new Date(
+													upcomingTasks[0].session_start_time
+												).toLocaleTimeString([], {
+													hour: "2-digit",
+													minute: "2-digit",
+												})}
+												{" - "}
+												{new Date(
+													upcomingTasks[0].session_end_time
+												).toLocaleTimeString([], {
+													hour: "2-digit",
+													minute: "2-digit",
+												})}
 											</div>
-										</li>
-									))
+										</div>
+										<div className="task-date">
+											{new Date(
+												upcomingTasks[0].session_date
+											).toLocaleDateString()}
+										</div>
+									</li>
 								) : (
 									<li>No upcoming tasks</li>
 								)}

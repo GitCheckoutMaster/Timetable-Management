@@ -1,4 +1,3 @@
-import asyncHandler from "../utils/asyncHandler.js";
 import connection from "../db/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -21,7 +20,7 @@ async function generateTokens(user) {
 	return { accessToken, refreshToken };
 }
 
-export const register = asyncHandler(async (req, res) => {
+export const register = (async (req, res) => {
   const { name, email, password, phone, admin } = req.body;
   const query = "SELECT * FROM users WHERE email = ?";
 
@@ -50,7 +49,7 @@ export const register = asyncHandler(async (req, res) => {
   });
 });
 
-export const login = asyncHandler(async (req, res) => {
+export const login = (async (req, res) => {
 	const { email, password, admin } = req.body;
 	const query = "SELECT * FROM users WHERE email=? AND admin=?";
 
@@ -87,7 +86,7 @@ export const login = asyncHandler(async (req, res) => {
 	});
 });
 
-export const getAllTrainers = asyncHandler(async (req, res) => {
+export const getAllTrainers = (async (req, res) => {
 	const query = "SELECT * FROM users WHERE admin = 0";
 
 	connection.query(query, (error, results) => {
@@ -104,7 +103,7 @@ export const getAllTrainers = asyncHandler(async (req, res) => {
 	});
 });
 
-export const getTaskByUserId = asyncHandler(async (req, res) => {
+export const getTaskByUserId = (async (req, res) => {
 	const userId = req.params.userId;
 	const query = "SELECT * FROM trainer_utilization WHERE trainer_id = ?";
 
@@ -122,7 +121,7 @@ export const getTaskByUserId = asyncHandler(async (req, res) => {
 	});
 });
 
-export const logout = asyncHandler(async (_, res) => {
+export const logout = (async (_, res) => {
 	res.clearCookie("refreshToken");
 	res.clearCookie("accessToken");
 	return res.status(200).json(new ApiResponse(200, "Logout successful"));
