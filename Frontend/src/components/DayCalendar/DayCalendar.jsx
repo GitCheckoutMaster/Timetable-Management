@@ -3,6 +3,7 @@ import "./DayCalendarStyle.css";
 import { useEffect, useState } from "react";
 import TaskCard from "../TaskCard/TaskCard.jsx";
 import { useOutletContext } from "react-router-dom";
+import { set } from "react-hook-form";
 
 const DayCalendar = () => {
 	const { selectedDate, tasks } = useOutletContext();
@@ -39,28 +40,15 @@ const DayCalendar = () => {
 	}, []);
 
 	useEffect(() => {
-		const updatedTasks = tasks?.filter((task) => {
+		const validTasks = tasks.filter((task) => {
 			const taskDate = new Date(task.session_date);
-
-			const isSameDate =
+			return (
 				taskDate.getDate() === selectedDate.getDate() &&
 				taskDate.getMonth() === selectedDate.getMonth() &&
-				taskDate.getFullYear() === selectedDate.getFullYear();
-
-			const isDailyRepeat = task.repeat_on === "daily";
-
-			const isWeeklyRepeat =
-				task.repeat_on === "weekly" &&
-				taskDate.getDay() === selectedDate.getDay();
-
-			const isMonthlyRepeat =
-				task.repeat_on === "monthly" &&
-				taskDate.getDate() === selectedDate.getDate();
-
-			return isSameDate || isDailyRepeat || isWeeklyRepeat || isMonthlyRepeat;
+				taskDate.getFullYear() === selectedDate.getFullYear()
+			);
 		});
-
-		setCurrentTasks(updatedTasks);
+		setCurrentTasks(validTasks);
 	}, [selectedDate, tasks]);
 
 	useEffect(() => {

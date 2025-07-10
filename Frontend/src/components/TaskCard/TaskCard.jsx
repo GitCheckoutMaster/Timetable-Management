@@ -251,7 +251,7 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 			<Delete
 				open={deleteOpen}
 				setOpen={setDeleteOpen}
-				taskId={taskDetails.id}
+				task={taskDetails}
 			/>
 		</>
 	);

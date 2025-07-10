@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { createTask } from "../../api";
 import Custom from "../CustomSelection/Custom";
+import { v4 as uuidv4 } from 'uuid';
 
 const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 	const popupRef = useRef();
@@ -50,67 +51,100 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 	}
 
 	const handleCreateTask = async (data) => {
-		const session_start_time = `${data.session_date} ${data.start_time}:00`;
-		const session_end_time = `${data.session_date} ${data.end_time}:00`;
+		const {
+			course_name,
+			repeat_on,
+			repeat_end,
+			session_date,
+			start_time,
+			end_time,
+		} = data;
+		const endDate = repeat_end ? new Date(repeat_end) : null;
+
+		let tasksToCreate = [];
 
 		if (customTasks.length > 0) {
-			if (customTasks.length === 0) {
-				alert("Please select at least one day for custom repeat.");
-				return;
-			}
-
+			const repeatGroupId = uuidv4();
+			console.log("Creating custom tasks with group ID:", repeatGroupId);
 			for (const task of customTasks) {
-				const payload = {
-					course_name: data.course_name,
-					repeat_on: task.repeat_on,
-					session_start_time: `${task.session_date} ${data.start_time}:00`,
-					session_end_time: `${task.session_date} ${data.end_time}:00`,
+				tasksToCreate.push({
+					course_name,
+					repeat_on: "custom",
+					session_start_time: `${task.session_date} ${start_time}:00`,
+					session_end_time: `${task.session_date} ${end_time}:00`,
 					trainer_id,
 					repeat_end: task.repeat_end || null,
 					session_date: task.session_date,
-				};
+					repeat_group_id: repeatGroupId, 
+				});
+			}
+		} else if (repeat_on === "none") {
+			// Single task
+			tasksToCreate.push({
+				course_name,
+				repeat_on,
+				session_start_time: `${session_date} ${start_time}:00`,
+				session_end_time: `${session_date} ${end_time}:00`,
+				trainer_id,
+				repeat_end: null,
+				session_date,
+			});
+		} else if (["daily", "weekly", "monthly"].includes(repeat_on)) {
+			if (!endDate) {
+				alert("Repeat end date is required for repeat tasks.");
+				return;
+			}
 
-				console.log("Create Custom Task Payload: ", payload);
-				const res = await createTask(payload);
-				if (res?.statusCode !== 200) {
-					alert("Failed to create custom task.");
-					return;
+			let currentDate = new Date(session_date);
+			const repeatGroupId = uuidv4(); 
+			while (currentDate <= endDate) {
+				const dateStr = currentDate.toISOString().split("T")[0];
+				tasksToCreate.push({
+					course_name,
+					repeat_on,
+					session_start_time: `${dateStr} ${start_time}:00`,
+					session_end_time: `${dateStr} ${end_time}:00`,
+					trainer_id,
+					repeat_end: repeat_end,
+					session_date: dateStr,
+					repeat_group_id: repeatGroupId,
+				});
+
+				// increment
+				if (repeat_on === "daily") {
+					currentDate.setDate(currentDate.getDate() + 1);
+				} else if (repeat_on === "weekly") {
+					currentDate.setDate(currentDate.getDate() + 7);
+				} else if (repeat_on === "monthly") {
+					currentDate.setMonth(currentDate.getMonth() + 1);
 				}
 			}
+		}
+
+		// send req to backend
+		try {
+			for (const payload of tasksToCreate) {
+				console.log("Creating task:", payload);
+				const res = await createTask(payload);
+				if (res?.statusCode !== 201) {
+					alert("Failed to create task");
+					return;
+				}
+				setTasks((prev) => [
+					...prev,
+					{
+						id: res.data.task.id,
+						...payload,
+					},
+				]);
+			}
+
 			setCustomTasks([]);
 			setCustomOpen(false);
 			setCreateOpen(false);
-			return;
-		}
-
-		const payload = {
-			course_name: data.course_name,
-			repeat_on: data.repeat_on,
-			session_start_time,
-			session_end_time,
-			trainer_id,
-			session_date: `${data.session_date}`,
-			repeat_end: data.repeat_end ? `${data.repeat_end}` : null,
-		};
-
-		console.log("Create Task Payload: ", payload);
-
-		const res = await createTask(payload);
-		if (res?.statusCode === 201) {
-			setCreateOpen(false);
-			setTasks((prevTasks) => [
-				...prevTasks,
-				{
-					id: res.data.task.id,
-					course_name: data.course_name,
-					session_date: data.session_date,
-					session_start_time: session_start_time,
-					session_end_time: session_end_time,
-					trainer_id: trainer_id,
-					repeat_on: data.repeat_on,
-					repeat_end: data.repeat_end,
-				},
-			]);
+		} catch (err) {
+			console.error("Task creation failed:", err);
+			alert("Something went wrong creating tasks.");
 		}
 	};
 

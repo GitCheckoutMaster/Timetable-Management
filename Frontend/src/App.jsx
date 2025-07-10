@@ -8,6 +8,7 @@ import MonthCalendar from './components/MonthCalendar/MonthCalendar.jsx';
 import RegisterTrainer from './components/RegisterTrainer/RegisterTrainer.jsx';
 import Session from './components/SessionManagement/Session.jsx';
 import PastSessions from './components/PastSessions/PastSessions.jsx';
+import ResetPassword from './pages/ResetPassword/ResetPassword.jsx';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='past-sessions' element={<PastSessions />} />
         </Route>
         <Route path='/login' element={<Login />} />
+        <Route path='/reset-password/:token' element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   )

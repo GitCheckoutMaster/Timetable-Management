@@ -38,18 +38,24 @@ const Custom = ({ open, setOpen, setCustomTasks }) => {
 		const endDate = document.getElementById("end-date").value;
 		const tasks = selectedDays.map((day) => {
 			const session_end = new Date(endDate);
-			const repeatOn = "weekly";
+			const repeatOn = "custom";
 			const session_date = getNextDayDate(day);
+			const newTasks = [];
 
-      return {
-        repeat_end: session_end.toISOString().split("T")[0],
-        repeat_on: repeatOn,
-        session_date: session_date.toISOString().split("T")[0],
-        day: day,
-      }
+			while (session_date < session_end) {
+				newTasks.push({
+					repeat_end: session_end.toISOString().split("T")[0],
+					repeat_on: repeatOn,
+					session_date: session_date.toISOString().split("T")[0],
+					day: day,
+				});
+				session_date.setDate(session_date.getDate() + 7); 
+			}
+			return newTasks;
 		});
-    setCustomTasks(tasks);
-    console.log("Custom Tasks Created:", tasks);
+		const flatTasks = tasks.flat();
+    setCustomTasks(flatTasks);
+    console.log("Custom Tasks Created:", flatTasks);
     setOpen(false);
 	};
 

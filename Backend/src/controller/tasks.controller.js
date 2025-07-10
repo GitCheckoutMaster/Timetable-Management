@@ -36,7 +36,8 @@ export const createTask = async (req, res) => {
 		location,
 		repeat_on,
 		repeat_end,
-		session_date
+		session_date,
+		repeat_group_id,
 	} = req.body;
 
 	if (
@@ -65,8 +66,8 @@ export const createTask = async (req, res) => {
 
 	const query = `
 		INSERT INTO trainer_utilization 
-		(course_name, session_start_time, session_end_time, trainer_id, session_date, location, repeat_on, repeat_end) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		(course_name, session_start_time, session_end_time, trainer_id, session_date, location, repeat_on, repeat_end, repeat_group_id) 
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`;
 
 	try {
@@ -79,6 +80,7 @@ export const createTask = async (req, res) => {
 			location ?? "Online",
 			repeat_on,
 			repeat_end,
+			repeat_group_id || null,
 		]);
 
 		const [fetchResults] = await connection.query(
@@ -183,6 +185,26 @@ export const deleteTask = async (req, res) => {
 		return res.status(500).json(new ApiError(500, "Internal server error"));
 	}
 };
+
+export const deleteTaskGroup = async (req, res) => {
+	const { repeatGroupId } = req.params;
+	if (!repeatGroupId) {
+		return res.status(400).json(new ApiError(400, "Repeat group ID is required"));
+	}
+	const query = "DELETE FROM trainer_utilization WHERE repeat_group_id = ?";
+	try {
+		const [result] = await connection.query(query, [repeatGroupId]);
+
+		if (result.affectedRows === 0) {
+			return res.status(404).json(new ApiError(404, "Task group not found"));
+		}
+
+		return res.status(200).json(new ApiResponse(200, "Task group deleted successfully"));
+	} catch (error) {
+		console.error("Database delete error:", error);
+		return res.status(500).json(new ApiError(500, "Internal server error"));
+	}
+}
 
 export const sendEmail = async (req, res) => {
 	const { task } = req.body;

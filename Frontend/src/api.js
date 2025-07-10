@@ -203,6 +203,22 @@ export const deleteTask = async (taskId) => {
     });
 }
 
+export const deleteTaskGroup = async (repeatGroupId) => {
+  return await api.delete(`/tasks/deleteTaskGroup/${repeatGroupId}`, { withCredentials: true })
+    .then((response) => {
+      // console.log("Task group deleted successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
+      console.error("Failed to delete task group: ", error.response ? error.response.data : error.message);
+    });
+}
+
 export const sendEmail = async (task) => {
   return await api.post("/tasks/sendEmail", {task}, { withCredentials: true })
     .then((response) => {
@@ -216,5 +232,27 @@ export const sendEmail = async (task) => {
         return;
       }
       console.error("Failed to send email: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const sendEmailForPasswordReset = async (email) => {
+  return await api.post("/user/reset-password-request", { email }, { withCredentials: true })
+    .then((response) => {
+      // console.log("Password reset email sent successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to send password reset email: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const resetPassword = async (token, newPassword) => {
+  return await api.post("/user/reset-password", { token, newPassword }, { withCredentials: true })
+    .then((response) => {
+      // console.log("Password reset successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to reset password: ", error.response ? error.response.data : error.message);
     });
 }
