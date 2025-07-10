@@ -190,3 +190,32 @@
   border-color: #4a7c59;
 }
 
+.session-management {
+  width: 220px;
+  height: 48px;
+  background: linear-gradient(135deg, #e7f8f2, #ffffff);
+  border: 2px solid #a2d5c6;
+  border-radius: 30px;
+  color: #4a7c59;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  padding-top: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.session-management:hover {
+  background: linear-gradient(135deg, #a2d5c6, #e7f8f2);
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: scale(1.05);
+  /* border-color: #4a7c59; */
+}
+
+.session-management:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+}
+

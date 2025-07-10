@@ -6,6 +6,7 @@ import DayCalendar from './components/DayCalendar/DayCalendar.jsx';
 import WeekCalendar from './components/WeekCalendar/WeekCalendar.jsx';
 import MonthCalendar from './components/MonthCalendar/MonthCalendar.jsx';
 import RegisterTrainer from './components/RegisterTrainer/RegisterTrainer.jsx';
+import Session from './components/SessionManagement/Session.jsx';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='week-view' element={<WeekCalendar />} />
           <Route path='month-view' element={<MonthCalendar />} />
           <Route path='register-trainer' element={<RegisterTrainer />} />
+          <Route path='session' element={<Session />} />
         </Route>
         <Route path='/login' element={<Login />} />
       </Routes>

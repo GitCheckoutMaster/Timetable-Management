@@ -141,10 +141,10 @@ const DayCalendar = () => {
 						} else {
 							width = 0;
 						}
-						if (isBeforeDate(selectedDate, startTime)) {
+						if (isBeforeDate(selectedDate, startTime) && task.repeat_on != "none") {
 							return null;
 						}
-						if (isAfterDate(selectedDate, endTime)) {
+						if (isAfterDate(selectedDate, endTime) && task.repeat_on != "none") {
 							return null;
 						}
 

@@ -108,7 +108,7 @@ const Home = () => {
 				value: trainer.id,
 				label: `${trainer.name}`,
 			}))
-		)
+		);
 	}, [trainers]);
 
 	useEffect(() => {
@@ -130,7 +130,6 @@ const Home = () => {
 		setUpcomingTasks(upcoming);
 	}, [tasks]);
 
-
 	// trainer select change handler
 	const handleTrainerChange = async (selectedOption) => {
 		const updatedTasks = await getTaskById(selectedOption.value);
@@ -143,6 +142,13 @@ const Home = () => {
 			<div className="calendar-container">
 				<div className="user-sidebar">
 					<Calendar onChange={setSelectedDate} value={selectedDate} />
+					<div
+						className="session-management"
+						style={{ display: user?.admin == 0 ? "block" : "none" }}
+						onClick={() => navigate("/home/session")}
+					>
+						Session Management
+					</div>
 					{user && user.admin == 0 ? (
 						<div className="upcoming-tasks">
 							<h3>Upcoming Tasks</h3>
@@ -177,8 +183,17 @@ const Home = () => {
 					) : (
 						<div className="admin-info">
 							<h3>Trainers</h3>
-							<Select options={options} styles={selectStyles} onChange={handleTrainerChange} />
-							<div className="register-trainer" onClick={() => navigate("/home/register-trainer")}>Register</div>
+							<Select
+								options={options}
+								styles={selectStyles}
+								onChange={handleTrainerChange}
+							/>
+							<div
+								className="register-trainer"
+								onClick={() => navigate("/home/register-trainer")}
+							>
+								Register
+							</div>
 						</div>
 					)}
 				</div>

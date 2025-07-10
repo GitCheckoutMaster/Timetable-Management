@@ -43,7 +43,8 @@ export const logout = async () => {
 }
 
 export const getAllTasks = async () => {
-  return await api.get("/tasks/getAllTasks", { withCredentials: true })
+  // return await api.get("/tasks/getAllTasks", { withCredentials: true })
+  return await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/tasks/getAllTasks`, { withCredentials: true })
     .then((response) => {
       // console.log("Tasks fetched successfully: ", response.data);
       return response.data.data.tasks;
@@ -79,10 +80,76 @@ export const createTask = async (data) => {
   console.log("Creating task with data: ", data);
   return await api.post("/tasks/createTask", data, { withCredentials: true })
     .then((response) => {
-      // console.log("Task created successfully: ", response.data);
+      console.log("Task created successfully: ", response.data);
       return response.data;
     })
     .catch((error) => {
       console.error("Failed to create task: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const createSession = async (data) => {
+  return await api.post("/session/createSession", data, { withCredentials: true })
+    .then((response) => {
+      console.log("Session created successfully: ", response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to create session: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const getAllSessions = async () => {
+  return await api.get("/session/getAllSessions", { withCredentials: true })
+    .then((response) => {
+      // console.log("Sessions fetched successfully: ", response.data);
+      return response.data.data.sessions;
+    })
+    .catch((error) => {
+      console.error("Failed to fetch sessions: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const updateSessionById = async (sessionId, data) => {
+  return await api.post(`/session/updateSession/${sessionId}`, data, { withCredentials: true })
+    .then((response) => {
+      // console.log("Session updated successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to update session: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const getSessionById = async (sessionId) => {
+  return await api.get(`/session/getSessionById/${sessionId}`, { withCredentials: true })
+    .then((response) => {
+      // console.log("Session fetched successfully: ", response.data);
+      return response.data.data;
+    })
+    .catch((error) => {
+      console.error("Failed to fetch session: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const updateTask = async (tasksId, data) => {
+  return await api.post(`/tasks/updateTask/${tasksId}`, data, { withCredentials: true })
+    .then((response) => {
+      // console.log("Task updated successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to update task: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const deleteTask = async (taskId) => {
+  return await api.delete(`/tasks/deleteTask/${taskId}`, { withCredentials: true })
+    .then((response) => {
+      // console.log("Task deleted successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to delete task: ", error.response ? error.response.data : error.message);
     });
 }

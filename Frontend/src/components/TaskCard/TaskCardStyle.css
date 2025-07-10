@@ -59,3 +59,20 @@
 .close-button:hover {
   background: #89c2b4;
 }
+
+.edit-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #f7b267;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.edit-button:hover {
+  background: #e89b3d;
+}

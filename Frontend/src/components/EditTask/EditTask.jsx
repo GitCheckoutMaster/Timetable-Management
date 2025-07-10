@@ -1,15 +1,14 @@
-import "./CreateTaskStyle.css";
+import "./EditTaskStyle.css";
 import Popup from "reactjs-popup";
 import { IoClose } from "react-icons/io5";
-import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { createTask } from "../../api";
+import { useState } from "react";
 import Custom from "../CustomSelection/Custom";
+import { updateTask } from "../../api";
 
-const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
-	const popupRef = useRef();
+const EditTask = ({ taskDetails, editOpen, setEditOpen }) => {
 	const { register, handleSubmit, watch } = useForm();
-	const [repeatEnd, setRepeatEnd] = useState(false);
+	const [repeatEnd, setRepeatEnd] = useState(taskDetails?.repeat_on !== "none");
 	const [customOpen, setCustomOpen] = useState(false);
 	const [customTasks, setCustomTasks] = useState([]);
 	const weekNames = [
@@ -22,36 +21,12 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 		"Saturday",
 	];
 
-	const watchDate = watch(
-		"session_date",
-		new Date().toISOString().split("T")[0]
-	);
+	const watchDate = watch("session_date", taskDetails?.session_date);
 
-	if (!trainer_id) {
-		return (
-			<Popup
-				open={createOpen}
-				closeOnDocumentClick={false}
-				modal
-				className="create-task-popup"
-				overlayClassName="create-task-overlay"
-			>
-				<button
-					className="create-close-button"
-					onClick={() => setCreateOpen(false)}
-				>
-					<IoClose size={12} />
-				</button>
-				<div className="create-task-error">
-					<p>Please select a trainer to create a task.</p>
-				</div>
-			</Popup>
-		);
-	}
-
-	const handleCreateTask = async (data) => {
+	const handleEdit = async (data) => {
 		const session_start_time = `${data.session_date} ${data.start_time}:00`;
 		const session_end_time = `${data.session_date} ${data.end_time}:00`;
+		console.log("Edited Task Data: ", data, "Custom: ", customTasks);
 
 		if (customTasks.length > 0) {
 			if (customTasks.length === 0) {
@@ -65,13 +40,13 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 					repeat_on: task.repeat_on,
 					session_start_time: `${task.session_date} ${data.start_time}:00`,
 					session_end_time: `${task.session_date} ${data.end_time}:00`,
-					trainer_id,
+					trainer_id: taskDetails.trainer_id,
 					repeat_end: task.repeat_end || null,
 					session_date: task.session_date,
 				};
 
 				console.log("Create Custom Task Payload: ", payload);
-				const res = await createTask(payload);
+				const res = await updateTask(taskDetails.id, payload);
 				if (res?.statusCode !== 200) {
 					alert("Failed to create custom task.");
 					return;
@@ -79,67 +54,51 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 			}
 			setCustomTasks([]);
 			setCustomOpen(false);
-			setCreateOpen(false);
+			setEditOpen(false);
 			return;
 		}
 
 		const payload = {
 			course_name: data.course_name,
-			repeat_on: data.repeat_on,
 			session_start_time,
 			session_end_time,
-			trainer_id,
-			session_date: `${data.session_date}`,
-			repeat_end: data.repeat_end ? `${data.repeat_end}` : null,
+			trainer_id: taskDetails.trainer_id,
+			location: taskDetails.location,
+			repeat_on: data.repeat_on,
+			repeat_end: data.repeat_end || null,
+			session_date: data.session_date,
+			custom_tasks: customTasks.length > 0 ? customTasks : null,
 		};
+		console.log("Payload for Update Task: ", taskDetails);
+		const res = await updateTask(taskDetails.id, payload);
+		console.log("Edit Task Response: ", res);
 
-		console.log("Create Task Payload: ", payload);
-
-		const res = await createTask(payload);
-		if (res?.statusCode === 201) {
-			setCreateOpen(false);
-			setTasks((prevTasks) => [
-				...prevTasks,
-				{
-					id: res.data.task.id,
-					course_name: data.course_name,
-					session_date: data.session_date,
-					session_start_time: session_start_time,
-					session_end_time: session_end_time,
-					trainer_id: trainer_id,
-					repeat_on: data.repeat_on,
-					repeat_end: data.repeat_end,
-				},
-			]);
-		}
+		setEditOpen(false);
 	};
 
 	return (
 		<Popup
-			open={createOpen}
+			open={editOpen}
 			closeOnDocumentClick={false}
 			modal
-			className="create-task-popup"
-			overlayClassName="create-task-overlay"
+			className="edit-task-popup"
+			overlayClassName="edit-task-overlay"
 			contentStyle={{ width: "400px", height: "auto", borderRadius: "10px" }}
 		>
-			<div ref={popupRef} className="create-task-container">
+			<div className="edit-task-container">
 				<button
-					className="create-close-button"
-					onClick={() => setCreateOpen(false)}
+					className="edit-close-button"
+					onClick={() => setEditOpen(false)}
 				>
 					<IoClose size={22} />
 				</button>
-
-				<h2>Create New Task</h2>
-				<form
-					className="create-task-form"
-					onSubmit={handleSubmit(handleCreateTask)}
-				>
-					<label htmlFor="task-name">Course Name:</label>
+				<h2>Edit Task</h2>
+				<form className="edit-task-form" onSubmit={handleSubmit(handleEdit)}>
+					<label htmlFor="course_name">Course Name:</label>
 					<input
 						type="text"
-						id="task-name"
+						id="course_name"
+						defaultValue={taskDetails?.course_name || ""}
 						{...register("course_name", { required: true })}
 					/>
 
@@ -147,7 +106,7 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 					<input
 						type="date"
 						id="session_date"
-						defaultValue={new Date().toISOString().split("T")[0]}
+						defaultValue={taskDetails?.session_date}
 						{...register("session_date", { required: true })}
 					/>
 
@@ -156,7 +115,13 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 						<input
 							type="time"
 							id="start_time"
-							defaultValue={new Date().toTimeString().slice(0, 5)}
+							defaultValue={
+								taskDetails?.session_start_time
+									? new Date(taskDetails.session_start_time)
+											.toTimeString()
+											.slice(0, 5)
+									: ""
+							}
 							{...register("start_time", { required: true })}
 						/>
 
@@ -164,9 +129,13 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 						<input
 							type="time"
 							id="end_time"
-							defaultValue={new Date(new Date().getTime() + 60 * 60 * 1000)
-								.toTimeString()
-								.slice(0, 5)}
+							defaultValue={
+								taskDetails?.session_end_time
+									? new Date(taskDetails.session_end_time)
+											.toTimeString()
+											.slice(0, 5)
+									: ""
+							}
 							{...register("end_time", { required: true })}
 						/>
 					</div>
@@ -174,9 +143,10 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 					<label htmlFor="repeat_on">Repeat On:</label>
 					<select
 						id="repeat_on"
+						defaultValue={taskDetails?.repeat_on || "none"}
 						{...register("repeat_on", { required: true })}
 						onChange={(e) => {
-							if (e.target.value != "none") {
+							if (e.target.value !== "none") {
 								setRepeatEnd(true);
 							} else {
 								setRepeatEnd(false);
@@ -199,27 +169,32 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 						</option>
 						<option value="custom">Custom</option>
 					</select>
+
 					<Custom
 						open={customOpen}
 						setOpen={setCustomOpen}
 						setCustomTasks={setCustomTasks}
 					/>
+
 					{repeatEnd && (
 						<div className="no-repeat-options">
-							<label htmlFor="repeat-end">Repeat End Date:</label>
+							<label htmlFor="repeat_end">Repeat End Date:</label>
 							<input
 								type="date"
-								name="repeat-end"
-								id="repeat-end"
+								id="repeat_end"
+								defaultValue={taskDetails?.repeat_end || ""}
 								{...register("repeat_end")}
 							/>
 						</div>
 					)}
-					<button type="submit">Create Task</button>
+
+					<button type="submit" className="submit-button">
+						Save Changes
+					</button>
 				</form>
 			</div>
 		</Popup>
 	);
 };
 
-export default CreateTask;
+export default EditTask;

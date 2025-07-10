@@ -1,0 +1,108 @@
+.edit-task-popup {
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  max-width: 600px;
+}
+
+.edit-task-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 3000 ;
+}
+
+.edit-task-container {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 25px 30px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+  /* max-width: 420px; */
+  width: 100%;
+  text-align: left;
+  animation: fadeInUp 0.3s ease-out;
+  position: relative;
+  z-index: 3001;
+}
+
+.edit-close-button {
+  display: inline-block;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.edit-task-form input,
+.edit-task-form select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.edit-task-form .time-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.no-repeat-options {
+  margin-top: 10px;
+}
+
+.submit-button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #4a7c59;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.submit-button:hover {
+  background: #3b664a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.submit-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.delete-button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #d9534f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.delete-button:hover {
+  background: #c9302c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.delete-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+

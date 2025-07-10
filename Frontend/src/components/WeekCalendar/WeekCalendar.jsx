@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import TaskCard from "../TaskCard/TaskCard.jsx";
 import { useOutletContext } from "react-router-dom";
 
+
+function formatDateTimeLocal(date) {
+	return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:00`;
+}
+
+
 const WeekCalendar = () => {
 	const { selectedDate, tasks } = useOutletContext();
 	const [selectedWeek, setSelectedWeek] = useState([]);
@@ -15,9 +21,7 @@ const WeekCalendar = () => {
 		today.getHours() * 60 + today.getMinutes()
 	);
 
-	// ----------------------
 	// Helpers
-	// ----------------------
 	const getDatesBetween = (startDate, endDate) => {
 		const dates = [];
 		const currentDate = new Date(startDate);
@@ -38,9 +42,7 @@ const WeekCalendar = () => {
 		)}`;
 	};
 
-	// ----------------------
 	// Calculate week days
-	// ----------------------
 	useEffect(() => {
 		const day = selectedDate?.getDay();
 		const date = selectedDate?.getDate();
@@ -57,9 +59,7 @@ const WeekCalendar = () => {
 		);
 	}, [selectedDate]);
 
-	// ----------------------
 	// Filter & generate tasks for this week
-	// ----------------------
 	useEffect(() => {
 		let updatedTasks = [];
 
@@ -100,55 +100,88 @@ const WeekCalendar = () => {
 				startTime.setHours(
 					new Date(task.session_start_time).getHours(),
 					new Date(task.session_start_time).getMinutes(),
-					0, 0
+					0,
+					0
 				);
 				endTime.setHours(
 					new Date(task.session_end_time).getHours(),
 					new Date(task.session_end_time).getMinutes(),
-					0, 0
+					0,
+					0
 				);
 
 				updatedTasks.push({
 					...task,
 					id: `${task.id}-daily-${formatDate(date)}`, // unique id
 					session_date: formatDate(date),
-					session_start_time: startTime.toISOString().slice(0,19).replace("T"," "),
-					session_end_time: endTime.toISOString().slice(0,19).replace("T"," "),
+					session_start_time: startTime
+						.toISOString()
+						.slice(0, 19)
+						.replace("T", " "),
+					session_end_time: endTime
+						.toISOString()
+						.slice(0, 19)
+						.replace("T", " "),
 				});
 			});
 		});
 
 		// Weekly tasks
 		let weeklyTasks = tasks?.filter((task) => task.repeat_on === "weekly");
+
 		weeklyTasks.forEach((task) => {
 			const taskDate = new Date(task.session_date);
 			const taskEndDate = new Date(task.repeat_end);
+
 			selectedWeek.forEach((date) => {
-				if (
-					taskDate.getDay() === date.getDay() &&
-					taskDate <= date &&
-					date <= taskEndDate
-				) {
-					const startTime = new Date(date);
-					const endTime = new Date(date);
-					startTime.setHours(
-						new Date(task.session_start_time).getHours(),
-						new Date(task.session_start_time).getMinutes(),
-						0, 0
+				// Only compare days (0-6) for repeat pattern
+				if (taskDate.getDay() === date.getDay()) {
+					// Compare by date (without time) to see if in range
+					const strippedTaskDate = new Date(
+						taskDate.getFullYear(),
+						taskDate.getMonth(),
+						taskDate.getDate()
 					);
-					endTime.setHours(
-						new Date(task.session_end_time).getHours(),
-						new Date(task.session_end_time).getMinutes(),
-						0, 0
+					const strippedTaskEndDate = new Date(
+						taskEndDate.getFullYear(),
+						taskEndDate.getMonth(),
+						taskEndDate.getDate()
+					);
+					const strippedDate = new Date(
+						date.getFullYear(),
+						date.getMonth(),
+						date.getDate()
 					);
 
-					updatedTasks.push({
-						...task,
-						id: `${task.id}-weekly-${formatDate(date)}`,
-						session_date: formatDate(date),
-						session_start_time: startTime.toISOString().slice(0,19).replace("T"," "),
-						session_end_time: endTime.toISOString().slice(0,19).replace("T"," "),
-					});
+					if (
+						strippedTaskDate <= strippedDate &&
+						strippedDate <= strippedTaskEndDate
+					) {
+						// Build the new times for this instance
+						const startTime = new Date(date);
+						const endTime = new Date(date);
+
+						const sessionStartTime = new Date(task.session_start_time);
+						const sessionEndTime = new Date(task.session_end_time);
+
+						const [startHours, startMinutes] = task.session_start_time
+							.split(" ")[1]
+							.split(":");
+						startTime.setHours(+startHours, +startMinutes, 0, 0);
+
+						const [endHours, endMinutes] = task.session_end_time
+							.split(" ")[1]
+							.split(":");
+						endTime.setHours(+endHours, +endMinutes, 0, 0);
+
+						updatedTasks.push({
+							...task,
+							id: `${task.id}-weekly-${formatDate(date)}`,
+							session_date: formatDate(date),
+							session_start_time: formatDateTimeLocal(startTime),
+							session_end_time: formatDateTimeLocal(endTime),
+						});
+					}
 				}
 			});
 		});
@@ -169,20 +202,28 @@ const WeekCalendar = () => {
 					startTime.setHours(
 						new Date(task.session_start_time).getHours(),
 						new Date(task.session_start_time).getMinutes(),
-						0, 0
+						0,
+						0
 					);
 					endTime.setHours(
 						new Date(task.session_end_time).getHours(),
 						new Date(task.session_end_time).getMinutes(),
-						0, 0
+						0,
+						0
 					);
 
 					updatedTasks.push({
 						...task,
 						id: `${task.id}-monthly-${formatDate(date)}`,
 						session_date: formatDate(date),
-						session_start_time: startTime.toISOString().slice(0,19).replace("T"," "),
-						session_end_time: endTime.toISOString().slice(0,19).replace("T"," "),
+						session_start_time: startTime
+							.toISOString()
+							.slice(0, 19)
+							.replace("T", " "),
+						session_end_time: endTime
+							.toISOString()
+							.slice(0, 19)
+							.replace("T", " "),
 					});
 				}
 			});
@@ -191,9 +232,7 @@ const WeekCalendar = () => {
 		setCurrentTasks(updatedTasks);
 	}, [tasks, selectedWeek, selectedDate]);
 
-	// ----------------------
 	// Live line
-	// ----------------------
 	const linePos = minutesOfCurrentDay * 1.17;
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -262,7 +301,7 @@ const WeekCalendar = () => {
 							console.log("Rendering task:", {
 								id: task.id,
 								date: task.session_date,
-								start: task.session_start_time
+								start: task.session_start_time,
 							});
 							return (
 								<TaskCard
