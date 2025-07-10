@@ -5,7 +5,9 @@
   width: 100%;
   min-height: 80px;
   padding: 0 40px;
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
+  background: linear-gradient(to right, #a6e2e7, #eff8f2);
+
   border-radius: 20px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
@@ -117,7 +119,6 @@
   color: white;
 }
 
-/* ========= NEW CREATE BUTTON ========= */
 .create-btn {
   background: linear-gradient(135deg, #4a7c59, #a2d5c6);
   border: none;

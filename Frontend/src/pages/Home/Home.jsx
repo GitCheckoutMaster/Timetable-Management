@@ -132,7 +132,7 @@ const Home = () => {
 			?.sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
 			?.slice(0, 5);
 		
-		if (upcoming.length > 0) {
+		if (upcoming?.length > 0) {
 			sendReminder(upcoming[0]);
 		}
 		setUpcomingTasks(upcoming);
@@ -235,7 +235,7 @@ const Home = () => {
 								className="register-trainer"
 								onClick={() => navigate("/home/register-trainer")}
 							>
-								Register
+								Add Trainer/Admin
 							</div>
 						</div>
 					)}

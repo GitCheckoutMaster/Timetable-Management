@@ -40,7 +40,7 @@ const DayCalendar = () => {
 	}, []);
 
 	useEffect(() => {
-		const validTasks = tasks.filter((task) => {
+		const validTasks = tasks?.filter((task) => {
 			const taskDate = new Date(task.session_date);
 			return (
 				taskDate.getDate() === selectedDate.getDate() &&

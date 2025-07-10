@@ -22,7 +22,7 @@ const RegisterTrainer = () => {
 
 	return (
 		<div className="register-trainer-container">
-			<h2>Register</h2>
+			<h2>Add Trainer/Admin</h2>
 			<form className="register-trainer-form" onSubmit={handleSubmit(onSubmit)}>
 				<div className="form-group">
 					<label htmlFor="name">Name:</label>
