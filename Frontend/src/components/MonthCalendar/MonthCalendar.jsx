@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import "./MonthCalendarStyle.css";
 import TaskCard from "../TaskCard/TaskCard";

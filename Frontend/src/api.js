@@ -159,7 +159,7 @@ export const getSessionById = async (sessionId) => {
   return await api.get(`/session/getSessionById/${sessionId}`, { withCredentials: true })
     .then((response) => {
       // console.log("Session fetched successfully: ", response.data);
-      return response.data.data;
+      return response.data;
     })
     .catch((error) => {
       if (error.response && error.response.status === 403) {

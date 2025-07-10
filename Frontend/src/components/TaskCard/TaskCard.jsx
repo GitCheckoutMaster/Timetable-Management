@@ -21,23 +21,34 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 	useEffect(() => {
 		const fetchSession = async () => {
 			const res = await getSessionById(taskDetails.id);
-			if (res?.statusCode === 200) {
-				const s = res.data;
-				setSession(s);
+			const s = res?.data;
+			setSession(s);
 
-				if (!s) {
-					setColor("#FF4C4C"); // RED
-				} else if (s.session_start && !s.session_end) {
-					setColor("#FFA500"); // ORANGE
-				} else if (s.session_start && s.session_end) {
-					setColor("#32CD32"); // GREEN
-				}
-			} else {
-				setColor("#FF4C4C");
-				console.error("Failed to fetch session details");
+			const datePart = taskDetails.session_date;
+			const timePart = taskDetails.session_start_time.split(" ")[1];
+
+			const combinedDateTime = `${datePart}T${timePart}`;
+			const combinedDate = new Date(combinedDateTime);
+
+			if (taskDetails.course_name === "custom") {
+				console.log("combined date: ", combinedDate);
+				console.log("date part: ", datePart);
+				console.log("time part: ", taskDetails.session_start_time);
 			}
-		};
 
+			if (!s && combinedDate < new Date()) {
+				setColor("#FF4C4C"); // RED
+			} else if (!s && combinedDate >= new Date()) {
+				setColor("#585dfb"); // BLUE
+			} else if (s.session_start && !s.session_end) {
+				setColor("#FFA500"); // ORANGE
+			} else if (s.session_start && s.session_end) {
+				setColor("#32CD32"); // GREEN
+			}
+
+			// setColor("#FF4C4C");
+			// console.error("Failed to fetch session details");
+		};
 		if (taskDetails?.id) {
 			fetchSession();
 		}
@@ -60,13 +71,16 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 		const endTime = new Date(taskDetails?.session_end_time);
 		const diffMinutes = Math.floor((endTime - startTime) / (1000 * 60));
 		if (viewWidth > 0) setHeight(1.167 * diffMinutes);
-		if (viewWidth !== 0) setTop((startTime.getHours() * 60 + startTime.getMinutes()) * 1.167);
+		if (viewWidth !== 0)
+			setTop((startTime.getHours() * 60 + startTime.getMinutes()) * 1.167);
 	}, [taskDetails, viewWidth]);
 
 	useEffect(() => {
 		let day = new Date(taskDetails?.session_date).getDay();
 		if (taskDetails?.repeat_on === "monthly" && selectedDate) {
-			day = new Date(taskDetails?.session_date).setMonth(selectedDate.getMonth());
+			day = new Date(taskDetails?.session_date).setMonth(
+				selectedDate.getMonth()
+			);
 			day = new Date(day).getDay();
 		}
 		if (viewWidth < 930 && viewWidth > 0) {
@@ -91,7 +105,9 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 
 	const handleDelete = () => {
 		if (session) {
-			alert("You cannot delete a task that has an ongoing or completed session.");
+			alert(
+				"You cannot delete a task that has an ongoing or completed session."
+			);
 			return;
 		}
 		if (new Date(taskDetails.session_start_time) < new Date()) {
@@ -112,7 +128,10 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 					top: `${top}px`,
 					left: `${left}px`,
 					width: `${viewWidth > 0 ? viewWidth - widthOffset : 150}px`,
-					background: `linear-gradient(135deg, ${color}, ${shadeColor(color, -20)})`,
+					background: `linear-gradient(135deg, ${color}, ${shadeColor(
+						color,
+						-20
+					)})`,
 					position: `${viewWidth > 0 ? "absolute" : "relative"}`,
 					fontSize: `${fontSize}px`,
 					borderRadius: viewWidth > 0 ? "8px" : "2px",
@@ -126,14 +145,16 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 						<span>
 							🟢{" "}
 							{new Date(session.session_start).toLocaleTimeString([], {
-								hour: "2-digit", minute: "2-digit",
+								hour: "2-digit",
+								minute: "2-digit",
 							})}
 						</span>
 						<span>
 							🔴{" "}
 							{session.session_end
 								? new Date(session.session_end).toLocaleTimeString([], {
-										hour: "2-digit", minute: "2-digit",
+										hour: "2-digit",
+										minute: "2-digit",
 								  })
 								: "—"}
 						</span>
@@ -145,41 +166,58 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 				<div className="popup-content">
 					<h2>{taskDetails.course_name}</h2>
 					<div className="popup-details">
-						<p>📍 <strong>Location:</strong> {taskDetails.location}</p>
-						<p>📅 <strong>Date:</strong>{" "}
+						<p>
+							📍 <strong>Location:</strong> {taskDetails.location}
+						</p>
+						<p>
+							📅 <strong>Date:</strong>{" "}
 							{new Date(taskDetails.session_date).toLocaleDateString("en-US", {
-								weekday: "long", month: "short", day: "numeric", year: "numeric",
+								weekday: "long",
+								month: "short",
+								day: "numeric",
+								year: "numeric",
 							})}
 						</p>
-						<p>⏰ <strong>Start:</strong>{" "}
+						<p>
+							⏰ <strong>Start:</strong>{" "}
 							{new Date(taskDetails.session_start_time).toLocaleTimeString([], {
-								hour: "2-digit", minute: "2-digit",
+								hour: "2-digit",
+								minute: "2-digit",
 							})}
 						</p>
-						<p>⏱️ <strong>End:</strong>{" "}
+						<p>
+							⏱️ <strong>End:</strong>{" "}
 							{new Date(taskDetails.session_end_time).toLocaleTimeString([], {
-								hour: "2-digit", minute: "2-digit",
+								hour: "2-digit",
+								minute: "2-digit",
 							})}
 						</p>
-						<p>🕒 <strong>Duration:</strong>{" "}
+						<p>
+							🕒 <strong>Duration:</strong>{" "}
 							{Math.floor(
 								(new Date(taskDetails.session_end_time) -
-									new Date(taskDetails.session_start_time)) / (1000 * 60)
-							)} min
+									new Date(taskDetails.session_start_time)) /
+									(1000 * 60)
+							)}{" "}
+							min
 						</p>
 
 						{session && (
 							<>
 								<hr />
-								<p>🟢 <strong>Session Start:</strong>{" "}
+								<p>
+									🟢 <strong>Session Start:</strong>{" "}
 									{new Date(session.session_start).toLocaleTimeString([], {
-										hour: "2-digit", minute: "2-digit",
+										hour: "2-digit",
+										minute: "2-digit",
 									})}
 								</p>
-								<p>🔴 <strong>Session End:</strong>{" "}
+								<p>
+									🔴 <strong>Session End:</strong>{" "}
 									{session.session_end
-										? new Date(session.session_end).toLocaleTimeString([], {
-												hour: "2-digit", minute: "2-digit",
+										? new Date(session?.session_end).toLocaleTimeString([], {
+												hour: "2-digit",
+												minute: "2-digit",
 										  })
 										: "—"}
 								</p>
@@ -210,7 +248,7 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 				editOpen={editOpen}
 				setEditOpen={setEditOpen}
 			/>
-			<Delete 
+			<Delete
 				open={deleteOpen}
 				setOpen={setDeleteOpen}
 				taskId={taskDetails.id}

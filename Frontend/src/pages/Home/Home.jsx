@@ -12,7 +12,6 @@ import { Outlet } from "react-router-dom";
 
 
 const sendReminder = async (task) => {
-	console.log("Sending email for ", task);
 	const res = await sendEmail(task);
 	console.log("Email sent response: ", res);
 }

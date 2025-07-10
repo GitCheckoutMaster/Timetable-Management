@@ -7,13 +7,14 @@ const PastSessions = () => {
   const { tasks } = useOutletContext();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const fetchSessions = async () => {
       const res = await getAllSessions();
       if (res) {
         const sessionsWithTasks = res.map((session) => {
-          const task = tasks.find((task) => task.id === session.task_id);
+          const task = tasks.find((task) => task.id === session.task_id && session.trainer_id === user.id);
           return {
             ...session,
             course_name: task?.course_name,
@@ -26,7 +27,7 @@ const PastSessions = () => {
       setLoading(false);
     };
     fetchSessions();
-  }, [ tasks ]);
+  }, [ tasks, user ]);
 
   return (
     <div className="past-sessions-container">

@@ -112,7 +112,7 @@ const WeekCalendar = () => {
 
 				updatedTasks.push({
 					...task,
-					id: `${task.id}-daily-${formatDate(date)}`, // unique id
+					id: `${task.id}`, // unique id
 					session_date: formatDate(date),
 					session_start_time: startTime
 						.toISOString()
@@ -176,7 +176,7 @@ const WeekCalendar = () => {
 
 						updatedTasks.push({
 							...task,
-							id: `${task.id}-weekly-${formatDate(date)}`,
+							id: `${task.id}`,
 							session_date: formatDate(date),
 							session_start_time: formatDateTimeLocal(startTime),
 							session_end_time: formatDateTimeLocal(endTime),
@@ -214,7 +214,7 @@ const WeekCalendar = () => {
 
 					updatedTasks.push({
 						...task,
-						id: `${task.id}-monthly-${formatDate(date)}`,
+						id: `${task.id}`,
 						session_date: formatDate(date),
 						session_start_time: startTime
 							.toISOString()
@@ -298,17 +298,17 @@ const WeekCalendar = () => {
 							></div>
 						)}
 						{currentTasks?.map((task) => {
-							console.log("Rendering task:", {
-								id: task.id,
-								date: task.session_date,
-								start: task.session_start_time,
-							});
+							// console.log("Rendering task:", {
+							// 	id: task.id,
+							// 	date: task.session_date,
+							// 	start: task.session_start_time,
+							// });
 							return (
 								<TaskCard
 									key={task.id}
 									taskDetails={task}
 									widthOffset={width}
-									viewWidth={123.8}
+									viewWidth={133.8}
 									selectedDate={selectedDate}
 								/>
 							);
