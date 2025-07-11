@@ -100,7 +100,7 @@ const MonthCalendar = () => {
 														taskDate.getFullYear() === date.getFullYear() &&
 														taskDate.getMonth() === date.getMonth() &&
 														taskDate.getDate() === date.getDate()
-													) && user.id === task.trainer_id;
+													) && (user.id === task.trainer_id || user.admin == 1);
 												})
 												.map((task) => (
 													<TaskCard
