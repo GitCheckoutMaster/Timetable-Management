@@ -35,6 +35,12 @@ This application allows an admin to:
 
 ---
 
+## 🔐 Default Admin Credentials
+
+- **Email:** `admin@gmail.com`
+- **Password:** `123456789`
+
+
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the repository
