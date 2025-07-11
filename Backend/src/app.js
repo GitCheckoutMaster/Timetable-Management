@@ -5,6 +5,7 @@ import userRouter from "./routes/user.routes.js";
 import multer from "multer";
 import tasksRouter from "./routes/tasks.routes.js";
 import sessionRouter from "./routes/session.routes.js";
+import batchRouter from "./routes/batch.routes.js";
 
 const upload = multer();
 const app = express();
@@ -26,5 +27,6 @@ app.use(cookieParser());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/tasks", tasksRouter);
 app.use("/api/v1/session", sessionRouter);
+app.use("/api/v1/batch", batchRouter);
 
 export default app;

@@ -9,6 +9,8 @@ import RegisterTrainer from './components/RegisterTrainer/RegisterTrainer.jsx';
 import Session from './components/SessionManagement/Session.jsx';
 import PastSessions from './components/PastSessions/PastSessions.jsx';
 import ResetPassword from './pages/ResetPassword/ResetPassword.jsx';
+import AddBatch from './components/AddBatch/AddBatch.jsx';
+import RemoveBatch from './components/RemoveBatch/RemoveBatch.jsx';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path='register-trainer' element={<RegisterTrainer />} />
           <Route path='session' element={<Session />} />
           <Route path='past-sessions' element={<PastSessions />} />
+          <Route path='add-batch' element={<AddBatch />} />
+          <Route path='remove-batch' element={<RemoveBatch />} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/reset-password/:token' element={<ResetPassword />} />

@@ -48,12 +48,12 @@ export const getSessions = async (req, res) => {
 };
 
 export const getSessionById = async (req, res) => {
-  const { sessionId } = req.params;
+  const { taskId } = req.params;
 
   try {
     const [results] = await connection.query(
-      `SELECT * FROM sessions WHERE id = ?`,
-      [sessionId]
+      `SELECT * FROM sessions WHERE task_id = ?`,
+      [taskId]
     );
 
     if (results.length === 0) {

@@ -156,8 +156,8 @@ export const updateSessionById = async (sessionId, data) => {
     });
 }
 
-export const getSessionById = async (sessionId) => {
-  return await api.get(`/session/getSessionById/${sessionId}`, { withCredentials: true })
+export const getSessionById = async (taskId) => {
+  return await api.get(`/session/getSessionById/${taskId}`, { withCredentials: true })
     .then((response) => {
       // console.log("Session fetched successfully: ", response.data);
       return response.data;
@@ -255,5 +255,45 @@ export const resetPassword = async (token, newPassword) => {
     })
     .catch((error) => {
       console.error("Failed to reset password: ", error.response ? error.response.data : error.message);
+    });
+}
+
+export const addBatch = async (data) => {
+  return await api.post("/batch/addBatch", data, { withCredentials: true })
+    .then((response) => {
+      // console.log("Batch added successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to add batch: ", error.response ? error.response.data : error.message);
+      return error.response ? error.response.data : error.message;
+    });
+}
+
+export const deleteBatch = async (batchCode) => {
+  return await api.delete(`/batch/deleteBatch/${batchCode}`, { withCredentials: true })
+    .then((response) => {
+      // console.log("Batch deleted successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error("Failed to delete batch: ", error.response ? error.response.data : error.message);
+      return error.response ? error.response.data : error.message;
+    });
+}
+
+export const getAllBatches = async () => {
+  return await api.get("/batch/getAllBatches", { withCredentials: true })
+    .then((response) => {
+      // console.log("Batches fetched successfully: ", response);
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
+      console.error("Failed to fetch batches: ", error.response ? error.response.data : error.message);
     });
 }

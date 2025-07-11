@@ -7,6 +7,7 @@ const MonthCalendar = () => {
 	const { selectedDate, tasks } = useOutletContext();
 	const [selectedMonths, setSelectedMonths] = useState([]);
 	const shortWeekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	const user = JSON.parse(localStorage.getItem("user")) || {};
 	const shortMonthDays = [
 		"Jan",
 		"Feb",
@@ -60,46 +61,6 @@ const MonthCalendar = () => {
 			date.getFullYear() === now.getFullYear()
 		);
 	};
-
-	const doesTaskAppearOnDate = (task, date) => {
-		const taskDate = new Date(task.session_date);
-
-		if (task.repeat_on === "daily") return true;
-		if (task.repeat_on === "weekly" && taskDate.getDay() === date.getDay())
-			return true;
-		if (task.repeat_on === "monthly" && taskDate.getDate() === date.getDate())
-			return true;
-
-		// Non-repeating
-		return (
-			taskDate.getDate() === date.getDate() &&
-			taskDate.getMonth() === date.getMonth() &&
-			taskDate.getFullYear() === date.getFullYear()
-		);
-	};
-
-	const isBeforeDate = (d1, d2) => {
-		return (
-			d1.getFullYear() < d2.getFullYear() ||
-			(d1.getFullYear() === d2.getFullYear() &&
-				d1.getMonth() < d2.getMonth()) ||
-			(d1.getFullYear() === d2.getFullYear() &&
-				d1.getMonth() === d2.getMonth() &&
-				d1.getDate() < d2.getDate())
-		);
-	};
-
-	const isAfterDate = (d1, d2) => {
-		return (
-			d1.getFullYear() > d2.getFullYear() ||
-			(d1.getFullYear() === d2.getFullYear() &&
-				d1.getMonth() > d2.getMonth()) ||
-			(d1.getFullYear() === d2.getFullYear() &&
-				d1.getMonth() === d2.getMonth() &&
-				d1.getDate() > d2.getDate())
-		);
-	};
-
 	return (
 		<div className="month-calendar">
 			<div className="month-calendar-header">
@@ -133,35 +94,22 @@ const MonthCalendar = () => {
 											</div>
 
 											{filteredTasks
-												?.filter((task) => doesTaskAppearOnDate(task, date))
-												.map((task) => {
+												?.filter((task) => {
 													const taskDate = new Date(task.session_date);
-													if (task.repeat_on !== "none") {
-														const repeatEnd = new Date(task.repeat_end);
-														if (
-															isBeforeDate(date, taskDate) ||
-															isAfterDate(date, repeatEnd)
-														) {
-															return null;
-														}
-													} else {
-														if (
-															isBeforeDate(date, taskDate) ||
-															isAfterDate(date, taskDate)
-														) {
-															return null;
-														}
-													}
-
 													return (
-														<TaskCard
-															key={task.id}
-															taskDetails={task}
-															widthOffset={0}
-															viewWidth={0}
-														/>
-													);
-												})}
+														taskDate.getFullYear() === date.getFullYear() &&
+														taskDate.getMonth() === date.getMonth() &&
+														taskDate.getDate() === date.getDate()
+													) && user.id === task.trainer_id;
+												})
+												.map((task) => (
+													<TaskCard
+														key={task.id}
+														taskDetails={task}
+														widthOffset={0}
+														viewWidth={0}
+													/>
+												))}
 										</div>
 									</td>
 								))}

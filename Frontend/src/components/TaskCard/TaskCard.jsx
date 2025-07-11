@@ -22,7 +22,7 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 		const fetchSession = async () => {
 			const res = await getSessionById(taskDetails.id);
 			const s = res?.data;
-			setSession(s);
+			setSession(s.session);
 
 			const datePart = taskDetails.session_date;
 			const timePart = taskDetails.session_start_time.split(" ")[1];
@@ -30,11 +30,11 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 			const combinedDateTime = `${datePart}T${timePart}`;
 			const combinedDate = new Date(combinedDateTime);
 
-			if (taskDetails.course_name === "custom") {
-				console.log("combined date: ", combinedDate);
-				console.log("date part: ", datePart);
-				console.log("time part: ", taskDetails.session_start_time);
-			}
+			// if (taskDetails.course_name === "custom") {
+			// 	console.log("combined date: ", combinedDate);
+			// 	console.log("date part: ", datePart);
+			// 	console.log("time part: ", taskDetails.session_start_time);
+			// }
 
 			if (!s && combinedDate < new Date()) {
 				setColor("#FF4C4C"); // RED
@@ -45,9 +45,6 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 			} else if (s.session_start && s.session_end) {
 				setColor("#32CD32"); // GREEN
 			}
-
-			// setColor("#FF4C4C");
-			// console.error("Failed to fetch session details");
 		};
 		if (taskDetails?.id) {
 			fetchSession();

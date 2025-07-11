@@ -251,3 +251,33 @@
   box-shadow: 0 3px 10px rgba(0,0,0,0.07);
 }
 
+.add-batch, .remove-batch {
+  background: #a2d5c6;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 16px;
+  margin-top: 10px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-batch:hover {
+  background: #4a7c59;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.remove-batch {
+  background: #f5b7b1;
+}
+
+.remove-batch:hover {
+  background: #c0392b;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+

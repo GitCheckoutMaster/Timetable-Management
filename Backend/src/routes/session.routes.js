@@ -7,6 +7,6 @@ const sessionRouter = express.Router();
 sessionRouter.post('/createSession', verifyJWT, createSession);
 sessionRouter.post('/updateSession/:sessionId', verifyJWT, updateSessionById);
 sessionRouter.get('/getAllSessions', verifyJWT, getSessions);
-sessionRouter.get('/getSessionById/:sessionId', verifyJWT, getSessionById);
+sessionRouter.get('/getSessionById/:taskId', verifyJWT, getSessionById);
 
 export default sessionRouter;

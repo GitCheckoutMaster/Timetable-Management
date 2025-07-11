@@ -190,10 +190,10 @@ const Session = () => {
 	};
 
 	return (
-		<div className="session-container">
-			<div className="session-left">
+		<div className="session-start-end-container">
+			<div className="session-start-end-left">
 				{upcomingTask ? (
-					<div className="session-card">
+					<div className="session-start-end-card">
 						<h2>{upcomingTask.course_name}</h2>
 						<p>
 							<strong>Trainer ID:</strong> {upcomingTask.trainer_id}
@@ -232,7 +232,7 @@ const Session = () => {
 				)}
 			</div>
 
-			<div className="session-right">
+			<div className="session-start-end-right">
 				<h3>Past Sessions</h3>
 				<div className="past-session-list">
 					{sessions?.length > 0 ? (

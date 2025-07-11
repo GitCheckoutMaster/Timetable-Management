@@ -81,13 +81,25 @@ const Header = ({ setView, view, setTasks }) => {
 			</div>
 			<div className="header-right">
 				<div
+					className="add-batch"
+					style={{ display: user?.admin == 0 ? "none" : "block" }}
+					onClick={() => navigate("/home/add-batch")}
+				>
+					Add Batch
+				</div>
+				<div
 					className="create-btn"
 					style={{ display: user.admin == 1 ? "none" : "flex" }}
 					onClick={() => setCreatePopupOpen(true)}
 				>
 					Create
 				</div>
-				<CreateTask createOpen={createPopupOpen} setCreateOpen={setCreatePopupOpen} trainer_id={user.id} setTasks={setTasks} />
+				<CreateTask
+					createOpen={createPopupOpen}
+					setCreateOpen={setCreatePopupOpen}
+					trainer_id={user.id}
+					setTasks={setTasks}
+				/>
 				<div>
 					<select id="views" className="dropdown" onChange={viewChange}>
 						<option value="none">Select</option>

@@ -1,0 +1,78 @@
+.add-batch-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f0fff4;
+  border: 2px solid #28a745;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+}
+
+.add-batch-container h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #28a745;
+}
+
+.add-batch-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-batch-form input {
+  padding: 0.85rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.add-batch-form input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+}
+
+.add-batch-form button,
+.go-remove-batch {
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.add-batch-form button {
+  background: #28a745;
+  color: #fff;
+}
+
+.add-batch-form button:hover {
+  background: #218838;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.go-remove-batch {
+  background: #e74c3c;
+  color: #fff;
+  margin-top: 1rem;
+}
+
+.go-remove-batch:hover {
+  background: #c0392b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-batch-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+  color: #28a745;
+}

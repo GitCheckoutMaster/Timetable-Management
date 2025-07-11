@@ -169,27 +169,6 @@ const Home = () => {
 							<h3>Upcoming Tasks</h3>
 							<ul>
 								{upcomingTasks.length > 0 ? (
-									// upcomingTasks.map((task) => (
-									// 	<li key={task._id} className="task-item">
-									// 		<div className="task-info">
-									// 			<div className="task-title">{task.course_name}</div>
-									// 			<div className="task-time">
-									// 				{new Date(task.session_start_time).toLocaleTimeString(
-									// 					[],
-									// 					{ hour: "2-digit", minute: "2-digit" }
-									// 				)}
-									// 				{" - "}
-									// 				{new Date(task.session_end_time).toLocaleTimeString(
-									// 					[],
-									// 					{ hour: "2-digit", minute: "2-digit" }
-									// 				)}
-									// 			</div>
-									// 		</div>
-									// 		<div className="task-date">
-									// 			{new Date(task.session_date).toLocaleDateString()}
-									// 		</div>
-									// 	</li>
-									// ))
 									<li key={upcomingTasks[0]._id} className="task-item">
 										<div className="task-info">
 											<div className="task-title">

@@ -1,11 +1,13 @@
 import "./CreateTaskStyle.css";
 import Popup from "reactjs-popup";
+import { useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { createTask } from "../../api";
+import { createTask, getAllBatches } from "../../api";
 import Custom from "../CustomSelection/Custom";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import Select from "react-select";
 
 const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 	const popupRef = useRef();
@@ -13,6 +15,8 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 	const [repeatEnd, setRepeatEnd] = useState(false);
 	const [customOpen, setCustomOpen] = useState(false);
 	const [customTasks, setCustomTasks] = useState([]);
+	const [batches, setBatches] = useState([]);
+	const [selectedBatch, setSelectedBatch] = useState(null);
 	const [error, setError] = useState(null);
 	const weekNames = [
 		"Sunday",
@@ -23,6 +27,78 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 		"Friday",
 		"Saturday",
 	];
+	const selectStyles = {
+		control: (provided, state) => ({
+			...provided,
+			background: "#ffffff",
+			borderColor: "#a2d5c6",
+			borderRadius: "15px",
+			boxShadow: state.isFocused
+				? "0 0 0 2px rgba(162, 213, 198, 0.5)"
+				: "0 4px 12px rgba(0,0,0,0.05)",
+			padding: "4px 8px",
+			"&:hover": {
+				borderColor: "#4a7c59",
+			},
+		}),
+		option: (provided, state) => ({
+			...provided,
+			background: state.isFocused
+				? "#e7f8f2"
+				: state.isSelected
+				? "#a2d5c6"
+				: "#ffffff",
+			color: state.isSelected ? "#fff" : "#4a7c59",
+			cursor: "pointer",
+			fontSize: "14px",
+			"&:active": {
+				background: "#a2d5c6",
+				color: "#fff",
+			},
+		}),
+		menu: (provided) => ({
+			...provided,
+			borderRadius: "15px",
+			overflow: "hidden",
+			boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+		}),
+		singleValue: (provided) => ({
+			...provided,
+			color: "#4a7c59",
+			fontWeight: 500,
+		}),
+		placeholder: (provided) => ({
+			...provided,
+			color: "#888",
+		}),
+		dropdownIndicator: (provided) => ({
+			...provided,
+			color: "#a2d5c6",
+			"&:hover": {
+				color: "#4a7c59",
+			},
+		}),
+		indicatorSeparator: () => ({
+			display: "none",
+		}),
+	};
+
+	useEffect(() => {
+		const fetchBatches = async () => {
+			const res = await getAllBatches();
+			if (res?.statusCode === 200) {
+				setBatches(
+					res.data.map((batch) => ({
+						value: batch.batch_code,
+						label: `${batch.batch_name} (${batch.batch_code})`,
+					}))
+				);
+			} else {
+				console.error("Failed to fetch batches:", res?.msg || "Unknown error");
+			}
+		};
+		fetchBatches();
+	}, []);
 
 	const watchDate = watch(
 		"session_date",
@@ -51,6 +127,12 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 		);
 	}
 
+	function compareDates(date1, date2) {
+		const d1 = new Date(date1);
+		const d2 = new Date(date2);
+		return d1 < d2;
+	}
+
 	const handleCreateTask = async (data) => {
 		const {
 			course_name,
@@ -61,16 +143,26 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 			end_time,
 		} = data;
 		const endDate = repeat_end ? new Date(repeat_end) : null;
+		const batch_code = selectedBatch.value;
 
-		if (!course_name || !session_date || !start_time || !end_time) {
+		if (!course_name || !session_date || !start_time || !end_time || !batch_code) {
 			setError("All fields are required.");
 			return;
 		}
-		if (new Date(session_date) < new Date()) {
+
+		if (compareDates(session_date, new Date().toISOString().split("T")[0])) {
 			setError("Session date cannot be in the past.");
 			return;
 		}
 		
+		if (start_time.split(":")[0] >= end_time.split(":")[0]) {
+			setError("End time must be after start time.");
+			return;
+		}
+		if (new Date(start_time) < new Date()) {
+			setError("Start time cannot be in the past.");
+			return;
+		}
 
 		let tasksToCreate = [];
 
@@ -86,7 +178,8 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 					trainer_id,
 					repeat_end: task.repeat_end || null,
 					session_date: task.session_date,
-					repeat_group_id: repeatGroupId, 
+					repeat_group_id: repeatGroupId,
+					batch_code,
 				});
 			}
 		} else if (repeat_on === "none") {
@@ -99,6 +192,8 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 				trainer_id,
 				repeat_end: null,
 				session_date,
+				batch_code,
+				repeat_group_id: null,
 			});
 		} else if (["daily", "weekly", "monthly"].includes(repeat_on)) {
 			if (!endDate) {
@@ -107,7 +202,7 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 			}
 
 			let currentDate = new Date(session_date);
-			const repeatGroupId = uuidv4(); 
+			const repeatGroupId = uuidv4();
 			while (currentDate <= endDate) {
 				const dateStr = currentDate.toISOString().split("T")[0];
 				tasksToCreate.push({
@@ -119,6 +214,7 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 					repeat_end: repeat_end,
 					session_date: dateStr,
 					repeat_group_id: repeatGroupId,
+					batch_code,
 				});
 
 				// increment
@@ -171,7 +267,10 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 			<div ref={popupRef} className="create-task-container">
 				<button
 					className="create-close-button"
-					onClick={() => setCreateOpen(false)}
+					onClick={() => {
+						setCreateOpen(false);
+						setError(null);
+					}}
 				>
 					<IoClose size={22} />
 				</button>
@@ -215,6 +314,19 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 							{...register("end_time", { required: true })}
 						/>
 					</div>
+
+					<label htmlFor="batch">Batch:</label>
+					<Select
+						id="batch"
+						options={batches}
+						styles={selectStyles}
+						value={selectedBatch}
+						onChange={(option) => {
+							console.log("Selected batch:", option);
+							setSelectedBatch(option)
+						}}
+						placeholder="Select a batch"
+					/>
 
 					<label htmlFor="repeat_on">Repeat On:</label>
 					<select

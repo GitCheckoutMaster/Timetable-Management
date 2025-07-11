@@ -1,14 +1,14 @@
 import './DeleteStyle.css';
 import Popup from 'reactjs-popup';
 import { IoClose } from 'react-icons/io5';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { deleteTask, deleteTaskGroup } from '../../api.js'; 
 
 const Delete = ({ open, setOpen, task }) => {
 
-  useEffect(() => {
-    console.log("Delete component mounted with task:", task);
-  }, [task]);
+  // useEffect(() => {
+  //   console.log("Delete component mounted with task:", task);
+  // }, [task]);
   const handleDeleteSingle = async () => {
     const res = await deleteTask(task?.id);
     if (res?.statusCode === 200) {
