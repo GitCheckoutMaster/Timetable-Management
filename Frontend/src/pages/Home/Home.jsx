@@ -159,7 +159,6 @@ const Home = () => {
 					</div>
 					<div
 						className="past-sessions"
-						style={{ display: user?.admin == 0 ? "block" : "none" }}
 						onClick={() => navigate("/home/past-sessions")}
 					>
 						Past Sessions

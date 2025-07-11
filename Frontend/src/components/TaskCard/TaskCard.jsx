@@ -202,7 +202,7 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 							min
 						</p>
 
-						{session && (
+						{session ? (
 							<>
 								<hr />
 								<p>
@@ -222,6 +222,29 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 										: "—"}
 								</p>
 							</>
+						) : (
+							<p
+								style={{
+									display: "inline-block",
+									padding: "2px 8px",
+									borderRadius: "6px",
+									background:
+										new Date(taskDetails.session_start_time) < new Date()
+											? "rgba(255,76,76,0.15)"
+											: "rgba(50,205,50,0.15)",
+									color:
+										new Date(taskDetails.session_start_time) < new Date()
+											? "#FF4C4C"
+											: "#32CD32",
+									fontWeight: 600,
+									fontSize: "0.9rem",
+									marginTop: "8px",
+								}}
+							>
+								{new Date(taskDetails.session_start_time) < new Date()
+									? "Past"
+									: "Upcoming"}
+							</p>
 						)}
 					</div>
 
@@ -248,11 +271,7 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 				editOpen={editOpen}
 				setEditOpen={setEditOpen}
 			/>
-			<Delete
-				open={deleteOpen}
-				setOpen={setDeleteOpen}
-				task={taskDetails}
-			/>
+			<Delete open={deleteOpen} setOpen={setDeleteOpen} task={taskDetails} />
 		</>
 	);
 };

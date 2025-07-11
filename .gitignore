@@ -13,19 +13,19 @@ logs/
 # React frontend
 frontend/node_modules/
 frontend/build/
-frontend/.env
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+# frontend/.env
+# frontend/.env.local
+# frontend/.env.development.local
+# frontend/.env.test.local
+# frontend/.env.production.local
 
 # MySQL database
-*.sql
-*.dump
-*.mysql
-db_data/
-database/
-mysql_data/
+# *.sql
+# *.dump
+# *.mysql
+# db_data/
+# database/
+# mysql_data/
 
 # OS generated files
 .DS_Store

@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login.jsx';
 import Home from './pages/Home/Home.jsx';
 import DayCalendar from './components/DayCalendar/DayCalendar.jsx';
@@ -14,6 +14,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/' element={<Navigate to={"/home/day-view"} />} />
         <Route path='/home' element={<Home />}>
           <Route path='day-view' element={<DayCalendar />} />
           <Route path='week-view' element={<WeekCalendar />} />
