@@ -29,6 +29,22 @@ export const register = async (data) => {
     });
 }
 
+export const removeTrainer = async (email) => {
+  return await api.post("/user/removeTrainer", { email }, { withCredentials: true })
+    .then((response) => {
+      // console.log("Trainer removed successfully: ", response.data);
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 403) {
+        window.location.href = "/login";
+        localStorage.clear();
+        return;
+      }
+      console.error("Failed to remove trainer: ", error.response ? error.response.data : error.message);
+    });
+}
+
 export const logout = async () => {
   return await api.get("/user/logout", { withCredentials: true })
     .then((response) => {

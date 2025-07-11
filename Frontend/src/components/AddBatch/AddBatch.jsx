@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { addBatch } from '../../api.js';
 import './AddBatchStyle.css';
 
@@ -7,7 +7,7 @@ const AddBatch = () => {
   const [batchCode, setBatchCode] = useState('');
   const [batchName, setBatchName] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (user?.admin !== 1) {
@@ -48,12 +48,12 @@ const AddBatch = () => {
       </form>
       {message && <p className="add-batch-message">{message}</p>}
 
-      <button 
+      {/* <button 
         className="go-remove-batch"
         onClick={() => navigate('/home/remove-batch')}
       >
         Remove Batch
-      </button>
+      </button> */}
     </div>
   );
 };

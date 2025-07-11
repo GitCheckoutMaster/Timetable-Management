@@ -25,7 +25,7 @@ function App() {
           <Route path='session' element={<Session />} />
           <Route path='past-sessions' element={<PastSessions />} />
           <Route path='add-batch' element={<AddBatch />} />
-          <Route path='remove-batch' element={<RemoveBatch />} />
+          {/* <Route path='remove-batch' element={<RemoveBatch />} /> */}
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/reset-password/:token' element={<ResetPassword />} />

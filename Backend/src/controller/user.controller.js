@@ -63,6 +63,27 @@ export const register = async (req, res) => {
 	}
 };
 
+export const removeTrainer = async (req, res) => {
+	const { email } = req.body;
+	try {
+		const [result] = await connection.query(
+			"DELETE FROM users WHERE email = ? AND admin = 0",
+			[email]
+		);
+
+		if (result.affectedRows === 0) {
+			return res.status(404).json(new ApiError(404, "Trainer not found"));
+		}
+
+		return res
+			.status(200)
+			.json(new ApiResponse(200, "Trainer removed successfully"));
+	} catch (error) {
+		console.error("Remove trainer error:", error);
+		return res.status(500).json(new ApiError(500, "Internal server error"));
+	}
+}
+
 export const login = async (req, res) => {
 	const { email, password, admin } = req.body;
 
