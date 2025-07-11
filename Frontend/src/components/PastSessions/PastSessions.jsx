@@ -7,14 +7,15 @@ const PastSessions = () => {
   const { tasks } = useOutletContext();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const user = JSON.parse(localStorage.getItem('user'));
+  // const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const fetchSessions = async () => {
       const res = await getAllSessions();
       if (res) {
         const sessionsWithTasks = res.map((session) => {
-          const task = tasks.find((task) => task.id === session.task_id && session.trainer_id === user.id);
+          const task = tasks.find((task) => task.id === session.task_id);
+          if (!task) return;
           return {
             ...session,
             course_name: task?.course_name,
@@ -22,12 +23,14 @@ const PastSessions = () => {
           };
         });
         sessionsWithTasks.sort((a, b) => new Date(b.session_start) - new Date(a.session_start));
-        setSessions(sessionsWithTasks);
+        // Filter out any undefined sessions
+        const filteredSessions = sessionsWithTasks.filter(session => session !== undefined);
+        setSessions(filteredSessions);
       }
       setLoading(false);
     };
     fetchSessions();
-  }, [ tasks, user ]);
+  }, [ tasks ]);
 
   return (
     <div className="past-sessions-container">
@@ -39,16 +42,16 @@ const PastSessions = () => {
           {sessions.length === 0 ? (
             <p className="no-sessions">No past sessions found.</p>
           ) : (
-            sessions.map((session, index) => (
+            sessions.map((session, index) => session && (
               <div className="session-card" key={index}>
-                <h3>{session.course_name}</h3>
-                <p><strong>Date:</strong> {session.session_start?.split(" ")[0]}</p>
-                <p><strong>Started at:</strong> {session.session_start?.split(" ")[1]}</p>
-                <p><strong>Ended at:</strong> {session.session_end?.split(" ")[1]}</p>
-                {session.location && (
+                <h3>{session?.course_name}</h3>
+                <p><strong>Date:</strong> {session?.session_start?.split(" ")[0]}</p>
+                <p><strong>Started at:</strong> {session?.session_start?.split(" ")[1]}</p>
+                <p><strong>Ended at:</strong> {session?.session_end?.split(" ")[1]}</p>
+                {session?.location && (
                   <p><strong>Location:</strong> {session.location}</p>
                 )}
-                <p className={`status ${session.session_end ? `completed` : `incomplete`}`}>Session {session.session_end ? `completed` : `incomplete`}</p>
+                <p className={`status ${session?.session_end ? `completed` : `incomplete`}`}>Session {session?.session_end ? `completed` : `incomplete`}</p>
               </div>
             ))
           )}

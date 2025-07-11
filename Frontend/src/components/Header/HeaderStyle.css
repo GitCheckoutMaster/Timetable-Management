@@ -197,3 +197,22 @@
   opacity: 1;
   bottom: -45px;
 }
+
+.add-batch {
+  padding: 10px 24px;
+  margin-bottom: 10px;
+  background-color: #e7f8f2;
+  border: 2px solid #a2d5c6;
+  border-radius: 30px;
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-batch:hover {
+  background-color: #a2d5c6;
+  color: white;
+}
+

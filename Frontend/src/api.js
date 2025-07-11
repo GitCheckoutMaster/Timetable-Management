@@ -201,6 +201,7 @@ export const updateTask = async (tasksId, data) => {
         return;
       }
       console.error("Failed to update task: ", error.response ? error.response.data : error.message);
+      return error.response ? error.response.data : error.message;
     });
 }
 

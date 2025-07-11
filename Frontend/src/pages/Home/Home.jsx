@@ -7,7 +7,6 @@ import "./../../../node_modules/react-calendar/dist/Calendar.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllTasks, getAllTrainers, getTaskById, sendEmail } from "../../api.js";
-import Select from "react-select";
 import { Outlet } from "react-router-dom";
 
 
@@ -24,61 +23,6 @@ const Home = () => {
 	const [upcomingTasks, setUpcomingTasks] = useState([]);
 	const [trainers, setTrainers] = useState([]);
 	const user = JSON.parse(localStorage.getItem("user"));
-	const selectStyles = {
-		control: (provided, state) => ({
-			...provided,
-			background: "#ffffff",
-			borderColor: "#a2d5c6",
-			borderRadius: "15px",
-			boxShadow: state.isFocused
-				? "0 0 0 2px rgba(162, 213, 198, 0.5)"
-				: "0 4px 12px rgba(0,0,0,0.05)",
-			padding: "4px 8px",
-			"&:hover": {
-				borderColor: "#4a7c59",
-			},
-		}),
-		option: (provided, state) => ({
-			...provided,
-			background: state.isFocused
-				? "#e7f8f2"
-				: state.isSelected
-				? "#a2d5c6"
-				: "#ffffff",
-			color: state.isSelected ? "#fff" : "#4a7c59",
-			cursor: "pointer",
-			fontSize: "14px",
-			"&:active": {
-				background: "#a2d5c6",
-				color: "#fff",
-			},
-		}),
-		menu: (provided) => ({
-			...provided,
-			borderRadius: "15px",
-			overflow: "hidden",
-			boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-		}),
-		singleValue: (provided) => ({
-			...provided,
-			color: "#4a7c59",
-			fontWeight: 500,
-		}),
-		placeholder: (provided) => ({
-			...provided,
-			color: "#888",
-		}),
-		dropdownIndicator: (provided) => ({
-			...provided,
-			color: "#a2d5c6",
-			"&:hover": {
-				color: "#4a7c59",
-			},
-		}),
-		indicatorSeparator: () => ({
-			display: "none",
-		}),
-	};
 
 	useEffect(() => {
 		if (!localStorage.getItem("user")) {
@@ -146,7 +90,7 @@ const Home = () => {
 
 	return (
 		<div className="home-container">
-			<Header setView={setView} view={view} setTasks={setTasks} />
+			<Header setView={setView} view={view} setTasks={setTasks} options={options} handleTrainerChange={handleTrainerChange} />
 			<div className="calendar-container">
 				<div className="user-sidebar">
 					<Calendar onChange={setSelectedDate} value={selectedDate} />
@@ -204,11 +148,6 @@ const Home = () => {
 					) : (
 						<div className="admin-info">
 							<h3>Trainers</h3>
-							<Select
-								options={options}
-								styles={selectStyles}
-								onChange={handleTrainerChange}
-							/>
 							<div
 								className="register-trainer"
 								onClick={() => navigate("/home/register-trainer")}

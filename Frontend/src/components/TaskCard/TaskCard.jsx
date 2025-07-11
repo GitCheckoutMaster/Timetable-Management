@@ -198,6 +198,9 @@ const TaskCard = ({ taskDetails, widthOffset, viewWidth, selectedDate }) => {
 							)}{" "}
 							min
 						</p>
+						<p>
+							🏷️ <strong>Batch:</strong> {taskDetails.batch_code}
+						</p>
 
 						{session ? (
 							<>

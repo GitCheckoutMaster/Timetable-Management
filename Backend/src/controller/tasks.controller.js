@@ -166,6 +166,7 @@ export const updateTask = async (req, res) => {
 		repeat_on,
 		repeat_end,
 		session_date,
+		batch_code,
 	} = req.body;
 
 	if (
@@ -175,6 +176,7 @@ export const updateTask = async (req, res) => {
 		!trainer_id ||
 		!repeat_on ||
 		!session_date ||
+		!batch_code ||
 		(repeat_on !== "none" && !repeat_end)
 	) {
 		return res.status(400).json(new ApiError(400, "All fields are required"));
@@ -202,10 +204,70 @@ export const updateTask = async (req, res) => {
 			.json(new ApiError(400, "Session start time cannot be in the past"));
 	}
 
+	// check for overlapping sessions
+	const checkOverlapQuery = `SELECT * FROM trainer_utilization WHERE trainer_id = ? AND id != ? AND session_date = ? AND (session_start_time < ? AND session_end_time > ?)`;
+
+	try {
+		const [overlapResults] = await connection.query(checkOverlapQuery, [
+			trainer_id,
+			taskId,
+			session_date.split(" ")[0],
+			session_end_time,
+			session_start_time,
+		]);
+		if (overlapResults.length > 0) {
+			return res
+				.status(400)
+				.json(
+					new ApiError(400, "This session overlaps with an existing session")
+				);
+		}
+	} catch (error) {
+		console.error("Database overlap check error:", error);
+		return res.status(500).json(new ApiError(500, "Internal server error"));
+	}
+
+	// check for batch overlap
+	const checkBatchOverlapQuery = `
+  SELECT * FROM trainer_utilization 
+  WHERE session_date = ?
+		AND trainer_id != ? 
+    AND batch_code = ?
+    AND session_start_time < ? 
+    AND session_end_time > ?
+`;
+
+	try {
+		const [batchOverlapResults] = await connection.query(
+			checkBatchOverlapQuery,
+			[
+				session_date.split(" ")[0],
+				trainer_id,
+				batch_code,
+				session_end_time,
+				session_start_time,
+			]
+		);
+
+		if (batchOverlapResults.length > 0) {
+			return res
+				.status(400)
+				.json(
+					new ApiError(
+						400,
+						"This session overlaps with an existing batch session"
+					)
+				);
+		}
+	} catch (error) {
+		console.error("Database batch overlap check error:", error);
+		return res.status(500).json(new ApiError(500, "Internal server error"));
+	}
+
 	const query = `
 		UPDATE trainer_utilization SET
 		course_name = ?, session_start_time = ?, session_end_time = ?, 
-		trainer_id = ?, session_date = ?, location = ?, repeat_on = ?, repeat_end = ?
+		trainer_id = ?, session_date = ?, location = ?, repeat_on = ?, repeat_end = ?, batch_code = ?
 		WHERE id = ?
 	`;
 
@@ -219,6 +281,7 @@ export const updateTask = async (req, res) => {
 			location ?? "Online",
 			repeat_on,
 			repeat_end,
+			batch_code,
 			taskId,
 		]);
 

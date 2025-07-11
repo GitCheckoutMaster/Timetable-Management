@@ -156,6 +156,10 @@ const CreateTask = ({ createOpen, setCreateOpen, trainer_id, setTasks }) => {
 		}
 		
 		if (start_time.split(":")[0] >= end_time.split(":")[0]) {
+			if (data.start_time.split(":")[0] == data.end_time.split(":")[0] && data.start_time.split(":")[1] >= data.end_time.split(":")[1]) {
+				setError("End time must be after start time.");
+				return;
+			}
 			setError("End time must be after start time.");
 			return;
 		}
